@@ -14,6 +14,25 @@ class Customer {
         this.CustomerPassword = CustomerPassword;
         this.CustomerState = CustomerState;
     };
+    async login (CustomerPhone, CustomerPassword){
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = "DANG_NHAP(?,?)";
+                dbConnect.query(sql, [CustomerPhone, CustomerPassword], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        if (result.length > 0)
+                            resolve(new Customer(result[0].KH_MAKH, result[0].KH_TENKH, result[0].KH_SDT, result[0].KH_EMAIL, result[0].KH_MATKHAU, result[0].KH_TRANGTHAI));
+                        else
+                            resolve(new Customer())
+                    }
+
+                })
+            })
+        });
+    }
     async changPassword(){}
     async findWithPassword(CustomerPhone) {
         return new Promise((resolve, reject) => {

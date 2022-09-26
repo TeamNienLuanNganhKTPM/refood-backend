@@ -5,6 +5,7 @@ const router = express.Router();
 const Customer = require('../database/Customer')
 const { v4: uuidv4 } = require('uuid');
 const verifyToken = require('../authentication/auth')
+const sha = require('sha1')
 router.post('/login', async (req, res) => {
     const { phonenumber, password } = req.body;
     if (!phonenumber || !password)
@@ -24,7 +25,9 @@ router.post('/login', async (req, res) => {
                 .catch((err) => setImmediate(() => { throw err; }))
             console.log(foundedCustomer)
             if (foundedCustomer.CustomerId != undefined) {
-                let passwordValid = await argon2.verify(foundedCustomer.CustomerPassword, password)
+                let passwordValid = sha(password) == foundedCustomer.CustomerPassword
+                console.log(sha(password))
+                //await argon2.verify(foundedCustomer.CustomerPassword, password)
                 if (!passwordValid)
                     return res.status(200).json({ success: false, message: 'Incorrect password' })
                 else {
