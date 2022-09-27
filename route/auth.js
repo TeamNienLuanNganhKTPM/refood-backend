@@ -6,6 +6,7 @@ const Customer = require('../database/Customer')
 const { v4: uuidv4 } = require('uuid');
 const verifyToken = require('../authentication/auth')
 const sha = require('sha1')
+require('dotenv').config()
 router.post('/login', async (req, res) => {
     const { phonenumber, password } = req.body;
     if (!phonenumber || !password)
@@ -32,7 +33,7 @@ router.post('/login', async (req, res) => {
                     if (foundedCustomer.CustomerState == 0)
                         return res.status(200).json({ success: false, message: 'Customer user is blocked' })
                     else {
-                        let access_token = jwt.sign({ CustomerId: foundedCustomer.CustomerId }, process.env.ACCESS_TOKEN_SECRET)
+                        let access_token = `${jwt.sign({ CustomerId: foundedCustomer.CustomerId }, process.env.ACCESS_TOKEN_SECRET)}`
                         return res.status(200).json({
                             success: true, message: 'Login successfully',
                             access_token,
@@ -107,6 +108,32 @@ router.post('/register', async (req, res) => {
 })
 
 router.post('/change-password', verifyToken, async (req, res) => {
-    
+
+})
+
+router.get('/info', verifyToken, async (req, res) => {
+    const customerid = req.header('CustomerId')
+    await new Customer()
+                .findWithId(customerid)
+                .then((foundedCustomer) => {
+                    return res.status(200).json({
+                        success: true, 
+                        customer_info: {
+                            CustomerId: foundedCustomer.CustomerId,
+                            CustomerName: foundedCustomer.CustomerName,
+                            CustomerPhone: foundedCustomer.CustomerPhone,
+                            CustomerEmail: foundedCustomer.CustomerEmail,
+                            CustomerState: foundedCustomer.CustomerState,
+                        }
+                    });
+                })
+                .catch((err) => setImmediate(() => { 
+                    // throw err; 
+                    return res.status(400).json({
+                        success: false, 
+                        message: 'Please try again'
+                    });
+                }))
+    console.log(foundedCustomer)
 })
 module.exports = router

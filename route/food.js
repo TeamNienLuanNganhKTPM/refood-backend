@@ -2,6 +2,7 @@ const express = require('express')
 const jwt = require('jsonwebtoken')
 const router = express.Router();
 const FoodType = require('../database/FoodType')
+const Food = require('../database/Food')
 const verifyToken = require('../authentication/auth')
 router.post('/add-food-type', async (req, res) => {
     const { foodtypename, foodtypedescription } = req.body;
@@ -45,5 +46,41 @@ router.post('/add-food-type', async (req, res) => {
             return res.status(500).json({ success: false, message: 'Internal server error' })
         }
 
+})
+
+router.get('/get-foodtypes', async (req, res) => {
+    await new FoodType()
+        .getAll()
+        .then((foodtypes) => {
+            return res.status(200).json({
+                success: true,
+                foodtypes
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            // throw err; 
+            return res.status(400).json({
+                success: false,
+                message: 'Please try again'
+            });
+        }))
+})
+
+router.get('/get-foods', async (req, res) => {
+    await new Food()
+        .getAll()
+        .then((foods) => {
+            return res.status(200).json({
+                success: true,
+                foods
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            // throw err; 
+            return res.status(400).json({
+                success: false,
+                message: 'Please try again'
+            });
+        }))
 })
 module.exports = router

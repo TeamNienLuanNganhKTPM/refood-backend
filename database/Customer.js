@@ -53,6 +53,25 @@ class Customer {
             })
         });
     }
+    async findWithId(CustomerId) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = "SELECT KH_MAKH, KH_TENKH, KH_SDT, KH_EMAIL, KH_TRANGTHAI FROM khach_hang WHERE KH_MAKH = ?";
+                dbConnect.query(sql, [CustomerId], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        if (result.length > 0)
+                            resolve(new Customer(result[0].KH_MAKH, result[0].KH_TENKH, result[0].KH_SDT, result[0].KH_EMAIL, null, result[0].KH_TRANGTHAI));
+                        else
+                            resolve(new Customer())
+                    }
+
+                })
+            })
+        });
+    }
     async find(CustomerPhone) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
@@ -75,9 +94,9 @@ class Customer {
     async create(CustomerId, CustomerName, CustomerPhone, CustomerEmail, CustomerPassword, CustomerState) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = "call THEM_KHACH_HANG (?, ?, ?, ?)";
+                const sql = "call THEM_KHACH_HANG (?, ?, ?)";
                 // const sql = "INSERT INTO khach_hang(KH_MAKH, KH_TENKH, KH_SDT, KH_EMAIL, KH_MATKHAU, KH_TRANGTHAI) VALUES (?,?,?,?,?,?)";
-                dbConnect.query(sql, [CustomerName, CustomerPhone, CustomerEmail, CustomerPassword], (err, result) => {
+                dbConnect.query(sql, [CustomerName, CustomerPhone, CustomerPassword], (err, result) => {
                     if (err) {
                         return reject(err)
                     }

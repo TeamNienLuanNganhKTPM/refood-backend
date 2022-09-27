@@ -1,6 +1,3 @@
-const express = require('express')
-const jwt = require('jsonwebtoken')
-const router = express.Router();
 const dbConnect = require('./dbconnect');
 
 class FoodType {
@@ -40,6 +37,30 @@ class FoodType {
                     else {
                         if (result.length > 0)
                             resolve(new FoodType(result[0].LMA_MALOAI, result[0].LMA_TENLOAI, result[0].LMA_MOTA));
+                        else
+                            resolve(new FoodType())
+                    }
+
+                })
+            })
+        });
+    }
+    async getAll() {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = "SELECT * FROM loai_mon_an";
+                dbConnect.query(sql, [], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        if (result.length > 0) {
+                            let foodtypes = [];
+                            result.forEach(item => {
+                                foodtypes.push(new FoodType(item.LMA_MALOAI, item.LMA_TENLOAI, item.LMA_MOTA))
+                            });
+                            resolve(foodtypes);
+                        }
                         else
                             resolve(new FoodType())
                     }
