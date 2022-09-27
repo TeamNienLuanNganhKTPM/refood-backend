@@ -23,10 +23,8 @@ router.post('/login', async (req, res) => {
                     foundedCustomer = customer
                 })
                 .catch((err) => setImmediate(() => { throw err; }))
-            console.log(foundedCustomer)
             if (foundedCustomer.CustomerId != undefined) {
                 let passwordValid = sha(password) == foundedCustomer.CustomerPassword
-                console.log(sha(password))
                 //await argon2.verify(foundedCustomer.CustomerPassword, password)
                 if (!passwordValid)
                     return res.status(200).json({ success: false, message: 'Incorrect password' })
