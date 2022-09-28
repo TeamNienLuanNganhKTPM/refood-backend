@@ -455,7 +455,7 @@ class Food {
                 if (FoodReview != undefined) {
                     if (sqlArray.length > 0)
                         sql = sql.concat(` AND `)
-                    sql = sql.concat(` temp.DANH_GIA = ? `)
+                    sql = sql.concat(` temp.DANH_GIA >= ? `)
                     sqlArray.push(FoodReview)
                 }
                 dbConnect.query(sql, sqlArray, (err, result) => {

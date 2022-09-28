@@ -66,7 +66,7 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ success: false, message: 'Phone number is not valid' })
     else if (password !== repassword)
         return res.status(400).json({ success: false, message: 'Password is not match' })
-    else if (!name.match(/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u) == null)
+    else if (name.match(/^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
         return res.status(400).json({ success: false, message: 'Name is not valid!' })
     else
         try {
@@ -107,32 +107,171 @@ router.post('/register', async (req, res) => {
 
 })
 
-router.post('/change-password', verifyToken, async (req, res) => {
+router.put('/update/password', verifyToken, async (req, res) => {
+    const { oldpassword, newpassword, repassword } = req.body
+    const customerid = req.header('CustomerId')
+    await new Customer()
+        .findWithId(customerid)
+        .then(async (foundedCustomer) => {
+            if (foundedCustomer.CustomerId != null && foundedCustomer.CustomerState != 0) {
+                if (sha(oldpassword) == foundedCustomer.CustomerPassword) {
+                    if (newpassword == repassword) {
+                        await new Customer()
+                            .updatePassword(customerid, sha(newpassword))
+                            .then((result) => {
+                                if (result)
+                                    return res.status(200).json({
+                                        success: true,
+                                        message: 'Password is changed successfully'
+                                    });
+                                else
+                                    return res.status(400).json({
+                                        success: false,
+                                        message: 'Please try again'
+                                    });
+                            })
+                    } else
+                        return res.status(400).json({
+                            success: false,
+                            message: 'New password is not match with retype-password'
+                        });
+                } else
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Old password is incorrect'
+                    });
+            } else
+                return res.status(400).json({
+                    success: false,
+                    message: 'Your account is disabled or isn\'t existed'
+                });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Please try again'
+            });
+        }))
+})
 
+router.put('/update/info', verifyToken, async (req, res) => {
+    const { phonenumber, name, email } = req.body
+    const customerid = req.header('CustomerId')
+    await new Customer()
+        .findWithId(customerid)
+        .then(async (foundedCustomer) => {
+            if (foundedCustomer.CustomerId != null && foundedCustomer.CustomerState != 0) {
+                if (email.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/) == null && email != null) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Email không hợp lệ'
+                    });
+                }
+                else if (phonenumber.match(/(84|0[3|5|7|8|9])+([0-9]{8})\b/) == null) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Số điện thoại không hợp lệ'
+                    });
+                }
+                else if (name.match(/^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Tên không hợp lệ'
+                    });
+                }
+                else {
+                    await new Customer()
+                        .updateInfo(customerid, phonenumber, name, email)
+                        .then((result) => {
+                            if (result)
+                                return res.status(200).json({
+                                    success: true,
+                                    message: 'Cập nhật thông tin thành công'
+                                });
+                            else {
+                                return res.status(400).json({
+                                    success: false,
+                                    message: 'Quý khách vui lòng thử lại sau'
+                                });
+                            }
+                        })
+                        .catch((err) => {
+                            if (err.code == 'ER_DUP_ENTRY')
+                                return res.status(400).json({
+                                    success: false,
+                                    message: 'Số điện thoại Quý khách vừa nhập đã được đăng ký cho tài khoản khác'
+                                });
+                            else
+                                return res.status(400).json({
+                                    success: false,
+                                    message: 'Quý khách vui lòng thử lại sau'
+                                });
+                        })
+
+                }
+            } else
+                return res.status(400).json({
+                    success: false,
+                    message: 'Tài khoản đã bị khóa hoặc không tồn tại'
+                });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
 })
 
 router.get('/info', verifyToken, async (req, res) => {
     const customerid = req.header('CustomerId')
     await new Customer()
-                .findWithId(customerid)
-                .then((foundedCustomer) => {
-                    return res.status(200).json({
-                        success: true, 
-                        customer_info: {
-                            CustomerId: foundedCustomer.CustomerId,
-                            CustomerName: foundedCustomer.CustomerName,
-                            CustomerPhone: foundedCustomer.CustomerPhone,
-                            CustomerEmail: foundedCustomer.CustomerEmail,
-                            CustomerState: foundedCustomer.CustomerState,
-                        }
-                    });
-                })
-                .catch((err) => setImmediate(() => { 
-                    // throw err; 
-                    return res.status(400).json({
-                        success: false, 
-                        message: 'Please try again'
-                    });
-                }))
+        .findWithId(customerid)
+        .then((foundedCustomer) => {
+            return res.status(200).json({
+                success: true,
+                customer_info: {
+                    CustomerId: foundedCustomer.CustomerId,
+                    CustomerName: foundedCustomer.CustomerName,
+                    CustomerPhone: foundedCustomer.CustomerPhone,
+                    CustomerEmail: foundedCustomer.CustomerEmail,
+                    CustomerState: foundedCustomer.CustomerState,
+                }
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            // throw err; 
+            return res.status(400).json({
+                success: false,
+                message: 'Please try again'
+            });
+        }))
 })
+
+router.get('/info/:CustomerId', verifyToken, async (req, res) => {
+    const customerid = req.params.CustomerId
+    console.log(req.params)
+    await new Customer()
+        .findWithId(customerid)
+        .then((foundedCustomer) => {
+            return res.status(200).json({
+                success: true,
+                customer_info: {
+                    CustomerId: foundedCustomer.CustomerId,
+                    CustomerName: foundedCustomer.CustomerName,
+                    CustomerPhone: foundedCustomer.CustomerPhone,
+                    CustomerEmail: foundedCustomer.CustomerEmail,
+                    CustomerState: foundedCustomer.CustomerState,
+                }
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            // throw err; 
+            return res.status(400).json({
+                success: false,
+                message: 'Please try again'
+            });
+        }))
+})
+
 module.exports = router

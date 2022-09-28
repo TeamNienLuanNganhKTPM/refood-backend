@@ -33,7 +33,38 @@ class Customer {
     //         })
     //     });
     // }
-    async changPassword(){}
+    async updatePassword(CustomerId, CustomerPassword) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = "UPDATE khach_hang SET KH_MATKHAU = ? WHERE KH_MAKH = ?";
+                dbConnect.query(sql, [CustomerPassword, CustomerId], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        resolve(result.affectedRows)
+                    }
+
+                })
+            })
+        });
+    }
+    async updateInfo(CustomerId, CustomerPhone, CustomerName, CustomerEmail) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = "call CAP_NHAT_KHACH_HANG(?,?,?,?)";
+                dbConnect.query(sql, [CustomerId, CustomerPhone, CustomerName, CustomerEmail], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        resolve(result.affectedRows)
+                    }
+
+                })
+            })
+        });
+    }
     async findWithPassword(CustomerPhone) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
@@ -56,16 +87,16 @@ class Customer {
     async findWithId(CustomerId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = "SELECT KH_MAKH, KH_TENKH, KH_SDT, KH_EMAIL, KH_TRANGTHAI FROM khach_hang WHERE KH_MAKH = ?";
+                const sql = "SELECT KH_MAKH, KH_TENKH, KH_SDT, KH_EMAIL, KH_MATKHAU, KH_TRANGTHAI FROM khach_hang WHERE KH_MAKH = ?";
                 dbConnect.query(sql, [CustomerId], (err, result) => {
                     if (err) {
                         return reject(err)
                     }
                     else {
                         if (result.length > 0)
-                            resolve(new Customer(result[0].KH_MAKH, result[0].KH_TENKH, result[0].KH_SDT, result[0].KH_EMAIL, null, result[0].KH_TRANGTHAI));
+                            resolve(new Customer(result[0].KH_MAKH, result[0].KH_TENKH, result[0].KH_SDT, result[0].KH_EMAIL, result[0].KH_MATKHAU, result[0].KH_TRANGTHAI));
                         else
-                            resolve(new Customer())
+                            resolve(new Customer(null, null, null, null, null))
                     }
 
                 })
