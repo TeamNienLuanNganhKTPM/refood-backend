@@ -134,6 +134,5 @@ router.get('/info', verifyToken, async (req, res) => {
                         message: 'Please try again'
                     });
                 }))
-    console.log(foundedCustomer)
 })
 module.exports = router
