@@ -188,8 +188,8 @@ router.get('/filter-foods', async (req, res) => {
             message: 'Can\'t fill with this query'
         });
     else {
-        let minPrice = (prices!=undefined)?prices.split('-')[0]:undefined;
-        let maxPrice = (prices!=undefined)?prices.split('-')[1]:undefined;
+        let minPrice = (prices != undefined) ? prices.split('-')[0] : undefined;
+        let maxPrice = (prices != undefined) ? prices.split('-')[1] : undefined;
         await new Food()
             .filterFoods(name, type, minPrice, maxPrice, ration, review)
             .then((foods) => {
@@ -206,5 +206,30 @@ router.get('/filter-foods', async (req, res) => {
                 });
             }))
     }
+})
+
+router.get('/get-food-details/:foodid', async (req, res) => {
+    const foodid = req.params.foodid
+    if (foodid != null)
+        await new Food()
+            .getDetails(foodid)
+            .then((food) => {
+                return res.status(200).json({
+                    success: true,
+                    food
+                });
+            })
+            .catch((err) => setImmediate(() => {
+                // throw err; 
+                return res.status(400).json({
+                    success: false,
+                    message: 'Please try again'
+                });
+            }))
+    else
+        return res.status(400).json({
+            success: false,
+            message: 'Không có mã món ăn để tìm'
+        });
 })
 module.exports = router

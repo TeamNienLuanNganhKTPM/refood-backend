@@ -122,34 +122,34 @@ router.put('/update/password', verifyToken, async (req, res) => {
                                 if (result)
                                     return res.status(200).json({
                                         success: true,
-                                        message: 'Password is changed successfully'
+                                        message: 'Đổi mật khẩu thành công'
                                     });
                                 else
                                     return res.status(400).json({
                                         success: false,
-                                        message: 'Please try again'
+                                        message: 'Quý khách vui lòng thử lại sau'
                                     });
                             })
                     } else
                         return res.status(400).json({
                             success: false,
-                            message: 'New password is not match with retype-password'
+                            message: 'Mật khẩu mới không khớp với mật khẩu xác nhận'
                         });
                 } else
                     return res.status(400).json({
                         success: false,
-                        message: 'Old password is incorrect'
+                        message: 'Mật khẩu cũ không chính xác'
                     });
             } else
                 return res.status(400).json({
                     success: false,
-                    message: 'Your account is disabled or isn\'t existed'
+                    message: 'Tài khoản đã bị khóa hoặc không tồn tại'
                 });
         })
         .catch((err) => setImmediate(() => {
             return res.status(400).json({
                 success: false,
-                message: 'Please try again'
+                message: 'Quý khách vui lòng thử lại sau'
             });
         }))
 })
@@ -240,10 +240,9 @@ router.get('/info', verifyToken, async (req, res) => {
             });
         })
         .catch((err) => setImmediate(() => {
-            // throw err; 
             return res.status(400).json({
                 success: false,
-                message: 'Please try again'
+                message: 'Quý khách vui lòng thử lại sau'
             });
         }))
 })
@@ -266,10 +265,9 @@ router.get('/info/:CustomerId', verifyToken, async (req, res) => {
             });
         })
         .catch((err) => setImmediate(() => {
-            // throw err; 
             return res.status(400).json({
                 success: false,
-                message: 'Please try again'
+                message: 'Quý khách vui lòng thử lại sau'
             });
         }))
 })
