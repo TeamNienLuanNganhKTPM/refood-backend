@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const router = express.Router();
 const FoodType = require('../database/FoodType')
 const Food = require('../database/Food')
+const Comment = require('../database/Comment')
 const verifyToken = require('../authentication/auth')
 const intersectMany = require('../function/arrayFunction')
 router.post('/add-food-type', async (req, res) => {
@@ -230,6 +231,57 @@ router.get('/get-food-details/:foodid', async (req, res) => {
         return res.status(400).json({
             success: false,
             message: 'Không có mã món ăn để tìm'
+        });
+})
+
+router.get('/get-food-comments/:foodid', async (req, res) => {
+    const foodid = req.params.foodid
+    if (foodid != null)
+        await new Comment()
+            .getCommentByFoodId(foodid)
+            .then((comments) => {
+                return res.status(200).json({
+                    success: true,
+                    comments
+                });
+            })
+            .catch((err) => setImmediate(() => {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Please try again'
+                });
+            }))
+    else
+        return res.status(400).json({
+            success: false,
+            message: 'Không có mã món ăn để tìm'
+        });
+})
+
+router.post('/add-comment', verifyToken, async (req, res) => {
+    const { foodid, customerid, content } = req.body
+    const authHeader = req.header('Authorization')
+    const token = authHeader
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (customerid == decoded.CustomerId)
+        await new Comment()
+            .addComment(foodid.split('MA')[1], customerid.split('KH')[1], content)
+            .then((result) => {
+                return res.status(200).json({
+                    success: true,
+                    message: 'Thêm bình luận thành công'
+                });
+            })
+            .catch((err) => setImmediate(() => {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Please try again'
+                });
+            }))
+    else
+        return res.status(400).json({
+            success: false,
+            message: 'Token không hợp lệ'
         });
 })
 module.exports = router
