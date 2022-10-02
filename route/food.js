@@ -264,20 +264,73 @@ router.post('/add-comment', verifyToken, async (req, res) => {
     const token = authHeader
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
     if (customerid == decoded.CustomerId)
-        await new Comment()
-            .addComment(foodid.split('MA')[1], customerid.split('KH')[1], content)
-            .then((result) => {
-                return res.status(200).json({
-                    success: true,
-                    message: 'Thêm bình luận thành công'
-                });
-            })
-            .catch((err) => setImmediate(() => {
+        if (content.match(/^[0-9a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
+            return res.status(400).json({ success: false, message: 'Bình luận có chứa ký tự không hợp lệ!' })
+        else {
+            try {
+                await new Comment()
+                    .addComment(foodid.split('MA')[1], customerid.split('KH')[1], content)
+                    .then((result) => {
+                        return res.status(200).json({
+                            success: true,
+                            message: 'Thêm bình luận thành công'
+                        });
+                    })
+                    .catch((err) => setImmediate(() => {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Quý khách vui lòng thử lại sau'
+                        });
+                    }))
+            } catch (err) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Please try again'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
-            }))
+            }
+        }
+    else
+        return res.status(400).json({
+            success: false,
+            message: 'Token không hợp lệ'
+        });
+})
+
+router.put('/edit-comment', verifyToken, async (req, res) => {
+    const { commentid, foodid, customerid, content } = req.body
+    const authHeader = req.header('Authorization')
+    const token = authHeader
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (customerid == decoded.CustomerId)
+        if (content.match(/^[0-9a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
+            return res.status(400).json({ success: false, message: 'Bình luận có chứa ký tự không hợp lệ!' })
+        else {
+            try {
+                await new Comment()
+                    .editComment(
+                        commentid.split('BL')[1],
+                        foodid.split('MA')[1],
+                        customerid.split('KH')[1],
+                        content)
+                    .then((result) => {
+                        return res.status(200).json({
+                            success: true,
+                            message: 'Sửa bình luận thành công'
+                        });
+                    })
+                    .catch((err) => setImmediate(() => {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Quý khách vui lòng thử lại sau'
+                        });
+                    }))
+            } catch (err) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Quý khách vui lòng thử lại sau'
+                });
+            }
+        }
     else
         return res.status(400).json({
             success: false,

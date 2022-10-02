@@ -37,7 +37,7 @@ class Comment {
                                         CommentReplyID: result[i].TLBL_MATLBL,
                                         CommentReplyFor: result[i].BL_MABL,
                                         CommentReplierID: result[i].NVPT_MANV,
-                                        CommentReplierName: result[i].TLBL_MATLBL,
+                                        CommentReplierName: result[i].NVPT_TENNV,
                                         CommentReplyContent: result[i].TLBL_NOIDUNG,
                                         CommentReplyTime: result[i].TLBL_THOIGIAN,
                                     }];
@@ -48,7 +48,7 @@ class Comment {
                                                 CommentReplyID: result[j].TLBL_MATLBL,
                                                 CommentReplyFor: result[j].BL_MABL,
                                                 CommentReplierID: result[j].NVPT_MANV,
-                                                CommentReplierName: result[j].TLBL_MATLBL,
+                                                CommentReplierName: result[j].NVPT_TENNV,
                                                 CommentReplyContent: result[j].TLBL_NOIDUNG,
                                                 CommentReplyTime: result[j].TLBL_THOIGIAN,
                                             })
@@ -77,7 +77,7 @@ class Comment {
         });
     }
 
-    async addComment(FoodId, CustomerId, Content){
+    async addComment(FoodId, CustomerId, Content) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
                 const sql = "call THEM_BINH_LUAN(?,?,?)";
@@ -86,6 +86,27 @@ class Comment {
                         return reject(err)
                     }
                     else {
+                        resolve(result.affectedRows)
+                    }
+
+                })
+            })
+        });
+    }
+
+    async editComment(CommentId, FoodId, CustomerId, Content) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = `
+                        UPDATE binh_luan 
+                        SET BL_NOIDUNG = ?
+                        WHERE BL_MABL = ? AND MA_MAMON = ? AND KH_MAKH = ?`;
+                dbConnect.query(sql, [Content, CommentId, FoodId, CustomerId], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        console.log(result)
                         resolve(result.affectedRows)
                     }
 
