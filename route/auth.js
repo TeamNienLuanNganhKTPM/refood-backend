@@ -5,7 +5,8 @@ const router = express.Router();
 const Customer = require('../database/Customer')
 const { v4: uuidv4 } = require('uuid');
 const verifyToken = require('../authentication/auth')
-const sha = require('sha1')
+const sha = require('sha1');
+const Address = require('../database/Address');
 require('dotenv').config()
 router.post('/login', async (req, res) => {
     const { phonenumber, password } = req.body;
@@ -214,6 +215,222 @@ router.put('/update/info', verifyToken, async (req, res) => {
                     success: false,
                     message: 'Tài khoản đã bị khóa hoặc không tồn tại'
                 });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.post('/add/address', verifyToken, async (req, res) => {
+    const { name, phonenumber, apartmentnumber, street, ward, district, isdefault } = req.body
+    const customerid = req.header('CustomerId')
+    await new Customer()
+        .findWithId(customerid)
+        .then(async (foundedCustomer) => {
+            if (foundedCustomer.CustomerId != null && foundedCustomer.CustomerState != 0) {
+                if (phonenumber.match(/(84|0[3|5|7|8|9])+([0-9]{8})\b/) == null)
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Số điện thoại của Quý khách không hợp lệ'
+                    })
+                else if (name.match(/^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
+                    return res.status(400).json({
+                        uccess: false,
+                        message: 'Tên khách hàng không hợp lệ'
+                    })
+                else {
+                    try {
+                        await new Address()
+                            .addAddress(
+                                foundedCustomer.CustomerId.split('KH')[1],
+                                name,
+                                phonenumber,
+                                street,
+                                ward,
+                                district,
+                                apartmentnumber,
+                                isdefault
+                            )
+                            .then((address) => {
+                                return res.status(200).json({
+                                    success: true,
+                                    message: 'Tạo địa chỉ mới thành công',
+                                    address: address
+                                })
+                            })
+                            .catch((err) => {
+                                return res.status(400).json({
+                                    success: false,
+                                    message: 'Quý khách vui lòng thử lại sau'
+                                });
+                            })
+                    } catch (err) {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Quý khách vui lòng thử lại sau'
+                        });
+                    }
+                }
+            } else
+                return res.status(400).json({
+                    success: false,
+                    message: 'Tài khoản đã bị khóa hoặc không tồn tại'
+                });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.put('/update/address', verifyToken, async (req, res) => {
+    const { addressid, name, phonenumber, apartmentnumber, street, ward, district, isdefault } = req.body
+    const customerid = req.header('CustomerId')
+    await new Customer()
+        .findWithId(customerid)
+        .then(async (foundedCustomer) => {
+            if (foundedCustomer.CustomerId != null && foundedCustomer.CustomerState != 0) {
+                if (phonenumber.match(/(84|0[3|5|7|8|9])+([0-9]{8})\b/) == null)
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Số điện thoại của Quý khách không hợp lệ'
+                    })
+                else if (name.match(/^[a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
+                    return res.status(400).json({
+                        uccess: false,
+                        message: 'Tên khách hàng không hợp lệ'
+                    })
+                else {
+                    try {
+                        await new Address()
+                            .updateAddress(
+                                addressid,
+                                name,
+                                phonenumber,
+                                street,
+                                ward,
+                                district,
+                                apartmentnumber,
+                                isdefault
+                            )
+                            .then((address) => {
+                                return res.status(200).json({
+                                    success: true,
+                                    message: 'Cập nhât địa chỉ thành công',
+                                    address: address
+                                })
+                            })
+                            .catch((err) => {
+                                return res.status(400).json({
+                                    success: false,
+                                    message: 'Quý khách vui lòng thử lại sau'
+                                });
+                            })
+                    } catch (err) {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Quý khách vui lòng thử lại sau'
+                        });
+                    }
+                }
+            } else
+                return res.status(400).json({
+                    success: false,
+                    message: 'Tài khoản đã bị khóa hoặc không tồn tại'
+                });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.delete('/delete/address/:addressId', verifyToken, async (req, res) => {
+    const customerid = req.header('CustomerId')
+    const addressid = req.params.addressId
+    await new Customer()
+        .findWithId(customerid)
+        .then(async (foundedCustomer) => {
+            if (foundedCustomer.CustomerId != null && foundedCustomer.CustomerState != 0) {
+                try {
+                    await new Address()
+                        .deleteAddress(
+                            customerid,
+                            addressid
+                        )
+                        .then((result) => {
+                            if (result)
+                                return res.status(200).json({
+                                    success: true,
+                                    message: 'Xóa địa chỉ thành công',
+                                })
+                            else
+                                return res.status(400).json({
+                                    success: false,
+                                    message: 'Không tìm thấy địa chỉ để xóa',
+                                })
+                        })
+                        .catch((err) => {
+                            return res.status(400).json({
+                                success: false,
+                                message: 'Quý khách vui lòng thử lại sau'
+                            });
+                        })
+                } catch (err) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Quý khách vui lòng thử lại sau'
+                    });
+                }
+            } else
+                return res.status(400).json({
+                    success: false,
+                    message: 'Tài khoản đã bị khóa hoặc không tồn tại'
+                });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.get('/get-addresses', verifyToken, async (req, res) => {
+    const customerid = req.header('CustomerId')
+    await new Address()
+        .getAllAddresses(customerid)
+        .then((addresses) => {
+            return res.status(200).json({
+                success: true,
+                addresses
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.get('/get-address-detail/:addressId', verifyToken, async (req, res) => {
+    const addressid = req.params.addressId
+    const customerid = req.header('CustomerId')
+    await new Address()
+        .getAddressDetail(customerid, addressid)
+        .then((address) => {
+            return res.status(200).json({
+                success: true,
+                address_info: address
+            });
         })
         .catch((err) => setImmediate(() => {
             return res.status(400).json({
