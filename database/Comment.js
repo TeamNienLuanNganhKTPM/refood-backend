@@ -106,7 +106,25 @@ class Comment {
                         return reject(err)
                     }
                     else {
-                        console.log(result)
+                        resolve(result.affectedRows)
+                    }
+
+                })
+            })
+        });
+    }
+
+    async deleteComment(CommentId, FoodId, CustomerId) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = `
+                        DELETE FROM binh_luan
+                        WHERE BL_MABL = ? AND MA_MAMON = ? AND KH_MAKH = ?`;
+                dbConnect.query(sql, [CommentId, FoodId, CustomerId], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
                         resolve(result.affectedRows)
                     }
 

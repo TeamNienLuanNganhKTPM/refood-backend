@@ -308,15 +308,21 @@ router.put('/edit-comment', verifyToken, async (req, res) => {
             try {
                 await new Comment()
                     .editComment(
-                        commentid.split('BL')[1],
-                        foodid.split('MA')[1],
-                        customerid.split('KH')[1],
+                        commentid,
+                        foodid,
+                        customerid,
                         content)
                     .then((result) => {
-                        return res.status(200).json({
-                            success: true,
-                            message: 'Sửa bình luận thành công'
-                        });
+                        if (result == 1)
+                            return res.status(200).json({
+                                success: true,
+                                message: 'Sửa bình luận thành công'
+                            });
+                        else
+                            return res.status(400).json({
+                                success: false,
+                                message: 'Bình luận không tồn tại'
+                            });
                     })
                     .catch((err) => setImmediate(() => {
                         return res.status(400).json({
@@ -336,5 +342,42 @@ router.put('/edit-comment', verifyToken, async (req, res) => {
             success: false,
             message: 'Token không hợp lệ'
         });
+})
+
+router.delete('/delete-comment', verifyToken, async (req, res) => {
+    const { commentid, foodid } = req.body
+    const customerid = req.header('CustomerId')
+    try {
+        await new Comment()
+            .deleteComment(
+                commentid,
+                foodid,
+                customerid,
+            )
+            .then((result) => {
+                if (result)
+                    return res.status(200).json({
+                        success: true,
+                        message: 'Đã xóa bình luận'
+                    });
+                else
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Bình luận không tồn tại'
+                    });
+            })
+            .catch((err) => setImmediate(() => {
+                console.log(err)
+                return res.status(400).json({
+                    success: false,
+                    message: 'Quý khách vui lòng thử lại sau'
+                });
+            }))
+    } catch (err) {
+        return res.status(400).json({
+            success: false,
+            message: 'Quý khách vui lòng thử lại sau'
+        });
+    }
 })
 module.exports = router
