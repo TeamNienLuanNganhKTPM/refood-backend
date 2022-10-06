@@ -317,11 +317,17 @@ router.put('/update/address', verifyToken, async (req, res) => {
                                 isdefault
                             )
                             .then((address) => {
-                                return res.status(200).json({
-                                    success: true,
-                                    message: 'Cập nhât địa chỉ thành công',
-                                    address: address
-                                })
+                                if (address.AddressId != null)
+                                    return res.status(200).json({
+                                        success: true,
+                                        message: 'Cập nhât địa chỉ thành công',
+                                        address: address
+                                    })
+                                else
+                                    return res.status(400).json({
+                                        success: false,
+                                        message: 'Địa chỉ không tồn tại'
+                                    })
                             })
                             .catch((err) => {
                                 return res.status(400).json({

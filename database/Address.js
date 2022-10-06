@@ -112,7 +112,10 @@ class Address {
                         return reject(err)
                     }
                     else {
-                        resolve(new Address(AddressId, CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress))
+                        if (result.affectedRows == 1)
+                            resolve(new Address(AddressId, CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress))
+                        else
+                            resolve(new Address(null, null, null, null, null, null, null))
                     }
 
                 })
