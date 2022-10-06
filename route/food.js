@@ -276,10 +276,11 @@ router.get('/get-food-comments/:foodid', async (req, res) => {
 })
 
 router.post('/add-comment', verifyToken, async (req, res) => {
-    const { foodid, customerid, content } = req.body
+    const { foodid, content } = req.body
     const authHeader = req.header('Authorization')
     const token = authHeader
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const customerid = req.header('CustomerId')
     if (customerid == decoded.CustomerId)
         if (content.match(/^[0-9a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
             return res.status(400).json({ success: false, message: 'Bình luận có chứa ký tự không hợp lệ!' })
@@ -314,10 +315,11 @@ router.post('/add-comment', verifyToken, async (req, res) => {
 })
 
 router.put('/edit-comment', verifyToken, async (req, res) => {
-    const { commentid, foodid, customerid, content } = req.body
+    const { commentid, foodid, content } = req.body
     const authHeader = req.header('Authorization')
     const token = authHeader
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const customerid = req.header('CustomerId')
     if (customerid == decoded.CustomerId)
         if (content.match(/^[0-9a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
             return res.status(400).json({ success: false, message: 'Bình luận có chứa ký tự không hợp lệ!' })
