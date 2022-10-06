@@ -425,10 +425,16 @@ router.get('/get-address-detail/:addressId', verifyToken, async (req, res) => {
     await new Address()
         .getAddressDetail(customerid, addressid)
         .then((address) => {
-            return res.status(200).json({
-                success: true,
-                address_info: address
-            });
+            if (address.AddressId != null)
+                return res.status(200).json({
+                    success: true,
+                    address_info: address
+                });
+            else
+                return res.status(400).json({
+                    success: true,
+                    message: 'Địa chỉ không tồn tại, hoặc không thuộc về tài khoản này'
+                });
         })
         .catch((err) => setImmediate(() => {
             return res.status(400).json({

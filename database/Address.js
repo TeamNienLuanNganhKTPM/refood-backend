@@ -66,7 +66,7 @@ class Address {
                                     result[0]['DC_isDefault'],
                                 ))
                         } else
-                            resolve(new Address());
+                            resolve(new Address(null, null, null, null, null, null, null));
                     }
 
                 })
