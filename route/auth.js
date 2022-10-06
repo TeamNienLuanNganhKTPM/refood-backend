@@ -432,7 +432,7 @@ router.get('/get-address-detail/:addressId', verifyToken, async (req, res) => {
                 });
             else
                 return res.status(400).json({
-                    success: true,
+                    success: false,
                     message: 'Địa chỉ không tồn tại, hoặc không thuộc về tài khoản này'
                 });
         })
