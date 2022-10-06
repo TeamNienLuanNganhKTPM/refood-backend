@@ -1,14 +1,13 @@
 const dbConnect = require('./dbconnect');
 
 class Address {
-    constructor(AddressId, CustomerName, CustomerPhone, AddressStreetName, AddressWard, AddressDistrict, AddressApartmentNumber, isDefaultAddress) {
+    constructor(AddressId, CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress) {
         this.AddressId = AddressId
         this.AddressRecieverName = CustomerName
         this.AddressRecieverPhone = CustomerPhone
-        this.AddressStreetName = AddressStreetName
+        this.AddressNumAndStreetName = AddressNumAndStreetName
         this.AddressWard = AddressWard
         this.AddressDistrict = AddressDistrict
-        this.AddressApartmentNumber = AddressApartmentNumber
         this.isDefaultAddress = isDefaultAddress
     }
     async getAllAddresses(CustomerId) {
@@ -28,10 +27,9 @@ class Address {
                                         address['DC_MADC'],
                                         address['DC_NGUOINHAN'],
                                         address['DC_SDTNHAN'],
-                                        address['DC_TENDUONG'],
+                                        address['DC_DIACHI'],
                                         address['DC_TENPHUONG'],
                                         address['DC_TENQUANHUYEN'],
-                                        address['DC_SONHA'],
                                         address['DC_isDefault'],
                                     )
                                 )
@@ -62,10 +60,9 @@ class Address {
                                     result[0]['DC_MADC'],
                                     result[0]['DC_NGUOINHAN'],
                                     result[0]['DC_SDTNHAN'],
-                                    result[0]['DC_TENDUONG'],
+                                    result[0]['DC_DIACHI'],
                                     result[0]['DC_TENPHUONG'],
                                     result[0]['DC_TENQUANHUYEN'],
-                                    result[0]['DC_SONHA'],
                                     result[0]['DC_isDefault'],
                                 ))
                         } else
@@ -77,16 +74,16 @@ class Address {
         });
     }
 
-    async addAddress(CustomerId, CustomerName, CustomerPhone, AddressStreetName, AddressWard, AddressDistrict, AddressApartmentNumber, isDefaultAddress) {
+    async addAddress(CustomerId, CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = `call THEM_DIA_CHI(?,?,?,?,?,?,?,?,@AddressId)`;
-                dbConnect.query(sql, [CustomerId, CustomerName, CustomerPhone, AddressStreetName, AddressWard, AddressDistrict, AddressApartmentNumber, isDefaultAddress], (err, result) => {
+                const sql = `call THEM_DIA_CHI(?,?,?,?,?,?,?,@AddressId)`;
+                dbConnect.query(sql, [CustomerId, CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress], (err, result) => {
                     if (err) {
                         return reject(err)
                     }
                     else {
-                        resolve(new Address(result[0][0]['@AddressId'], CustomerName, CustomerPhone, AddressStreetName, AddressWard, AddressDistrict, AddressApartmentNumber, isDefaultAddress))
+                        resolve(new Address(result[0][0]['@AddressId'], CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress))
                     }
 
                 })
@@ -94,7 +91,7 @@ class Address {
         });
     }
 
-    async updateAddress(AddressId, CustomerName, CustomerPhone, AddressStreetName, AddressWard, AddressDistrict, AddressApartmentNumber, isDefaultAddress) {
+    async updateAddress(AddressId, CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
                 if (isDefaultAddress) {
@@ -105,18 +102,17 @@ class Address {
                 UPDATE dia_chi 
                 SET DC_NGUOINHAN = ?, 
                 DC_SDTNHAN = ?, 
-                DC_TENDUONG = ?, 
+                DC_DIACHI = ?, 
                 DC_TENPHUONG = ?, 
                 DC_TENQUANHUYEN = ?, 
-                DC_SONHA = ?, 
                 DC_isDefault = ? 
                 WHERE DC_MADC = ?`;
-                dbConnect.query(sql, [CustomerName, CustomerPhone, AddressStreetName, AddressWard, AddressDistrict, AddressApartmentNumber, isDefaultAddress, AddressId], (err, result) => {
+                dbConnect.query(sql, [CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress, AddressId], (err, result) => {
                     if (err) {
                         return reject(err)
                     }
                     else {
-                        resolve(new Address(AddressId, CustomerName, CustomerPhone, AddressStreetName, AddressWard, AddressDistrict, AddressApartmentNumber, isDefaultAddress))
+                        resolve(new Address(AddressId, CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress))
                     }
 
                 })

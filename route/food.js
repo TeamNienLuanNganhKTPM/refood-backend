@@ -63,7 +63,7 @@ router.get('/get-foodtypes', async (req, res) => {
             // throw err; 
             return res.status(400).json({
                 success: false,
-                message: 'Please try again'
+                message: 'Quý khách vui lòng thử lại sau'
             });
         }))
 })
@@ -81,7 +81,7 @@ router.get('/get-foods', async (req, res) => {
             // throw err; 
             return res.status(400).json({
                 success: false,
-                message: 'Please try again'
+                message: 'Quý khách vui lòng thử lại sau'
             });
         }))
 })
@@ -104,7 +104,7 @@ router.get('/find-foods', async (req, res) => {
             .catch((err) => setImmediate(() => {
                 return res.status(400).json({
                     success: false,
-                    message: 'Please try again'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
             }))
     }
@@ -118,7 +118,7 @@ router.get('/find-foods', async (req, res) => {
             .catch((err) => setImmediate(() => {
                 return res.status(400).json({
                     success: false,
-                    message: 'Please try again'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
             }))
     }
@@ -134,7 +134,7 @@ router.get('/find-foods', async (req, res) => {
             .catch((err) => setImmediate(() => {
                 return res.status(400).json({
                     success: false,
-                    message: 'Please try again'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
             }))
     }
@@ -148,7 +148,7 @@ router.get('/find-foods', async (req, res) => {
             .catch((err) => setImmediate(() => {
                 return res.status(400).json({
                     success: false,
-                    message: 'Please try again'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
             }))
     }
@@ -163,7 +163,7 @@ router.get('/find-foods', async (req, res) => {
                 console.log(err)
                 return res.status(400).json({
                     success: false,
-                    message: 'Please try again'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
             }))
     }
@@ -203,28 +203,45 @@ router.get('/filter-foods', async (req, res) => {
                 // throw err; 
                 return res.status(400).json({
                     success: false,
-                    message: 'Please try again'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
             }))
     }
 })
 
-router.get('/get-food-details/:foodid', async (req, res) => {
-    const foodid = req.params.foodid
-    if (foodid != null)
+router.get('/get-food-details/:foodKey', async (req, res) => {
+    const foodKey = req.params.foodKey
+    console.log(foodKey)
+    if (foodKey != null)
         await new Food()
-            .getDetails(foodid)
-            .then((food) => {
-                return res.status(200).json({
-                    success: true,
-                    food
-                });
+            .getDetailsSlug(foodKey)
+            .then(async (food) => {
+                if (food.length > 0)
+                    return res.status(200).json({
+                        success: true,
+                        food_info: food[0]
+                    });
+                else {
+                    await new Food()
+                        .getDetails(foodKey)
+                        .then((food) => {
+                            return res.status(200).json({
+                                success: true,
+                                food_info: food[0]
+                            });
+                        })
+                        .catch((err) => setImmediate(() => {
+                            return res.status(400).json({
+                                success: false,
+                                message: 'Quý khách vui lòng thử lại sau'
+                            });
+                        }))
+                }
             })
             .catch((err) => setImmediate(() => {
-                // throw err; 
                 return res.status(400).json({
                     success: false,
-                    message: 'Please try again'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
             }))
     else
@@ -248,7 +265,7 @@ router.get('/get-food-comments/:foodid', async (req, res) => {
             .catch((err) => setImmediate(() => {
                 return res.status(400).json({
                     success: false,
-                    message: 'Please try again'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
             }))
     else

@@ -225,7 +225,7 @@ router.put('/update/info', verifyToken, async (req, res) => {
 })
 
 router.post('/add/address', verifyToken, async (req, res) => {
-    const { name, phonenumber, apartmentnumber, street, ward, district, isdefault } = req.body
+    const { name, phonenumber, apartmentnumberstreet, ward, district, isdefault } = req.body
     const customerid = req.header('CustomerId')
     await new Customer()
         .findWithId(customerid)
@@ -248,10 +248,9 @@ router.post('/add/address', verifyToken, async (req, res) => {
                                 foundedCustomer.CustomerId.split('KH')[1],
                                 name,
                                 phonenumber,
-                                street,
+                                apartmentnumberstreet,
                                 ward,
                                 district,
-                                apartmentnumber,
                                 isdefault
                             )
                             .then((address) => {
@@ -289,7 +288,7 @@ router.post('/add/address', verifyToken, async (req, res) => {
 })
 
 router.put('/update/address', verifyToken, async (req, res) => {
-    const { addressid, name, phonenumber, apartmentnumber, street, ward, district, isdefault } = req.body
+    const { addressid, name, phonenumber, apartmentnumberstreet, ward, district, isdefault } = req.body
     const customerid = req.header('CustomerId')
     await new Customer()
         .findWithId(customerid)
@@ -312,10 +311,9 @@ router.put('/update/address', verifyToken, async (req, res) => {
                                 addressid,
                                 name,
                                 phonenumber,
-                                street,
+                                apartmentnumberstreet,
                                 ward,
                                 district,
-                                apartmentnumber,
                                 isdefault
                             )
                             .then((address) => {
