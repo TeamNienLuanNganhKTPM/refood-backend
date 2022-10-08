@@ -4,6 +4,7 @@ const router = express.Router();
 const FoodType = require('../database/FoodType')
 const Food = require('../database/Food')
 const Comment = require('../database/Comment')
+const Cart = require('../database/Cart')
 const verifyToken = require('../authentication/auth')
 const intersectMany = require('../function/arrayFunction')
 router.post('/add-food-type', async (req, res) => {
@@ -399,4 +400,5 @@ router.delete('/delete-comment', verifyToken, async (req, res) => {
         });
     }
 })
+
 module.exports = router

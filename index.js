@@ -6,6 +6,7 @@ const app = express()
 const PORT = process.env.PORT
 const auth = require('./route/auth');
 const food = require('./route/food');
+const cart = require('./route/cart');
 const canthounit = require('./route/cantho-units');
 app.use(express.json())
 app.use(bodyParser.json({ limit: '10000mb', extended: true }));
@@ -24,4 +25,5 @@ app.get('/', (req, res) => {
 
 app.use('/auth', auth);
 app.use('/food', food);
+app.use('/cart', cart);
 app.use('/cantho-units', canthounit);
