@@ -75,11 +75,43 @@ router.get('/get-foods', async (req, res) => {
         .then((foods) => {
             return res.status(200).json({
                 success: true,
+                countAll: foods.length,
                 foods
             });
         })
         .catch((err) => setImmediate(() => {
             // throw err; 
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.get('/get-foods/:pageCur', async (req, res) => {
+    await new Food()
+        .getAll()
+        .then((foods) => {
+            let numberToGet = 9 //số lượng món ăn trên 1 trang
+            let pageNum = Math.ceil(foods.length / numberToGet);
+            const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+            let foodss = []
+            let curIndex = (pageCur - 1) * numberToGet
+            let count = 0
+            while (foods[curIndex] != null && count < numberToGet) {
+                foodss.push(foods[curIndex])
+                curIndex++
+                count++
+            }
+            return res.status(200).json({
+                success: true,
+                countOnPage: foodss.length,
+                pageCur,
+                pageNum,
+                foods: foodss,
+            });
+        })
+        .catch((err) => setImmediate(() => {
             return res.status(400).json({
                 success: false,
                 message: 'Quý khách vui lòng thử lại sau'
@@ -252,15 +284,88 @@ router.get('/get-food-details/:foodKey', async (req, res) => {
         });
 })
 
+// router.get('/get-food-comments/:foodid', async (req, res) => {
+//     const foodid = req.params.foodid
+//     if (foodid != null)
+//         await new Comment()
+//             .getCommentByFoodId(foodid)
+//             .then((comments) => {
+//                 return res.status(200).json({
+//                     success: true,
+//                     comments
+//                 });
+//             })
+//             .catch((err) => setImmediate(() => {
+//                 return res.status(400).json({
+//                     success: false,
+//                     message: 'Quý khách vui lòng thử lại sau'
+//                 });
+//             }))
+//     else
+//         return res.status(400).json({
+//             success: false,
+//             message: 'Không có mã món ăn để tìm'
+//         });
+// })
+
 router.get('/get-food-comments/:foodid', async (req, res) => {
     const foodid = req.params.foodid
     if (foodid != null)
         await new Comment()
             .getCommentByFoodId(foodid)
             .then((comments) => {
+                const limit = req.query.limit
+                let commentss = []
+                let curIndex = 0
+                let count = 0
+                while (comments[curIndex] != null && count < limit) {
+                    commentss.push(comments[curIndex])
+                    curIndex++
+                    count++
+                }
                 return res.status(200).json({
                     success: true,
-                    comments
+                    countOnPage: commentss.length,
+                    countAll: comments.length,
+                    comments: commentss
+                });
+            })
+            .catch((err) => setImmediate(() => {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Quý khách vui lòng thử lại sau'
+                });
+            }))
+    else
+        return res.status(400).json({
+            success: false,
+            message: 'Không có mã món ăn để tìm'
+        });
+})
+
+router.get('/get-food-comments/:foodid/:pageCur', async (req, res) => {
+    const foodid = req.params.foodid
+    if (foodid != null)
+        await new Comment()
+            .getCommentByFoodId(foodid)
+            .then((comments) => {
+                let numberToGet = 5 //số lượng comment trên 1 lần load
+                let pageNum = Math.ceil(comments.length / numberToGet);
+                const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+                let commentss = []
+                let curIndex = (pageCur - 1) * numberToGet
+                let count = 0
+                while (comments[curIndex] != null && count < numberToGet) {
+                    commentss.push(comments[curIndex])
+                    curIndex++
+                    count++
+                }
+                return res.status(200).json({
+                    success: true,
+                    countOnPage: commentss.length,
+                    pageCur,
+                    pageNum,
+                    comments: commentss
                 });
             })
             .catch((err) => setImmediate(() => {
@@ -315,54 +420,54 @@ router.post('/add-comment', verifyToken, async (req, res) => {
         });
 })
 
-router.put('/edit-comment', verifyToken, async (req, res) => {
-    const { commentid, foodid, content } = req.body
-    const authHeader = req.header('Authorization')
-    const token = authHeader
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-    const customerid = req.header('CustomerId')
-    if (customerid == decoded.CustomerId)
-        if (content.match(/^[0-9a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
-            return res.status(400).json({ success: false, message: 'Bình luận có chứa ký tự không hợp lệ!' })
-        else {
-            try {
-                await new Comment()
-                    .editComment(
-                        commentid,
-                        foodid,
-                        customerid,
-                        content)
-                    .then((result) => {
-                        if (result == 1)
-                            return res.status(200).json({
-                                success: true,
-                                message: 'Sửa bình luận thành công'
-                            });
-                        else
-                            return res.status(400).json({
-                                success: false,
-                                message: 'Bình luận không tồn tại'
-                            });
-                    })
-                    .catch((err) => setImmediate(() => {
-                        return res.status(400).json({
-                            success: false,
-                            message: 'Quý khách vui lòng thử lại sau'
-                        });
-                    }))
-            } catch (err) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Quý khách vui lòng thử lại sau'
-                });
-            }
-        }
-    else
-        return res.status(400).json({
-            success: false,
-            message: 'Token không hợp lệ'
-        });
-})
+// router.put('/edit-comment', verifyToken, async (req, res) => {
+//     const { commentid, foodid, content } = req.body
+//     const authHeader = req.header('Authorization')
+//     const token = authHeader
+//     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+//     const customerid = req.header('CustomerId')
+//     if (customerid == decoded.CustomerId)
+//         if (content.match(/^[0-9a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
+//             return res.status(400).json({ success: false, message: 'Bình luận có chứa ký tự không hợp lệ!' })
+//         else {
+//             try {
+//                 await new Comment()
+//                     .editComment(
+//                         commentid,
+//                         foodid,
+//                         customerid,
+//                         content)
+//                     .then((result) => {
+//                         if (result == 1)
+//                             return res.status(200).json({
+//                                 success: true,
+//                                 message: 'Sửa bình luận thành công'
+//                             });
+//                         else
+//                             return res.status(400).json({
+//                                 success: false,
+//                                 message: 'Bình luận không tồn tại'
+//                             });
+//                     })
+//                     .catch((err) => setImmediate(() => {
+//                         return res.status(400).json({
+//                             success: false,
+//                             message: 'Quý khách vui lòng thử lại sau'
+//                         });
+//                     }))
+//             } catch (err) {
+//                 return res.status(400).json({
+//                     success: false,
+//                     message: 'Quý khách vui lòng thử lại sau'
+//                 });
+//             }
+//         }
+//     else
+//         return res.status(400).json({
+//             success: false,
+//             message: 'Token không hợp lệ'
+//         });
+// })
 
 router.delete('/delete-comment', verifyToken, async (req, res) => {
     const { commentid, foodid } = req.body

@@ -16,7 +16,7 @@ class Food {
     async getAll() {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = `SELECT * , toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
+                const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
                             JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
                             JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
                             JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
@@ -28,6 +28,8 @@ class Food {
                     }
                     else {
                         if (result.length > 0) {
+                            console.log(result)
+
                             let foods = [];
                             let checked = 0;
                             for (let i = 0; i < result.length - 1; i = checked + 1) {
@@ -36,7 +38,9 @@ class Food {
                                     FoodImageUrl: result[i].AMA_URL,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
+                                
                                 let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
@@ -47,8 +51,9 @@ class Food {
                                                 FoodImageUrl: result[j].AMA_URL,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
-                                        if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
+                                        if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MACT })) == undefined)
                                             FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
@@ -83,7 +88,7 @@ class Food {
     async findByFoodName(FoodName) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = `SELECT * , toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
+                const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
                             JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
                             JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
                             JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
@@ -118,6 +123,7 @@ class Food {
                                             })
                                         if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
                                             FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
@@ -151,7 +157,7 @@ class Food {
     async findByFoodType(FoodTypeName) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = `SELECT * , toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
+                const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
                             JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
                             JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
                             JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
@@ -186,6 +192,7 @@ class Food {
                                             })
                                         if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
                                             FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
@@ -219,7 +226,7 @@ class Food {
     async findByFoodPrice(FoodPriceMin, FoodPriceMax) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = `SELECT * , toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
+                const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
                             JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
                             JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
                             JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
@@ -253,6 +260,7 @@ class Food {
                                             })
                                         if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
                                             FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
@@ -286,7 +294,7 @@ class Food {
     async findByFoodRation(FoodRation) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = `SELECT * , toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
+                const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
                             JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
                             JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
                             JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
@@ -320,6 +328,7 @@ class Food {
                                             })
                                         if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
                                             FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
@@ -388,6 +397,7 @@ class Food {
                                             })
                                         if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
                                             FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
@@ -493,6 +503,7 @@ class Food {
                                             })
                                         if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
                                             FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
@@ -574,6 +585,7 @@ class Food {
                                             })
                                         if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
                                             FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
@@ -653,6 +665,7 @@ class Food {
                                             })
                                         if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
                                             FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
