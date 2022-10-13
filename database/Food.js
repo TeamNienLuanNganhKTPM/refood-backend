@@ -566,6 +566,7 @@ class Food {
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
@@ -583,7 +584,7 @@ class Food {
                                                 FoodImageUrl: result[j].AMA_URL,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
-                                        if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
+                                        if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MACT })) == undefined)
                                             FoodPrices.push({
                                                 FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
@@ -653,6 +654,7 @@ class Food {
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
@@ -663,7 +665,7 @@ class Food {
                                                 FoodImageUrl: result[j].AMA_URL,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
-                                        if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MUCGIA })) == undefined)
+                                        if (FoodPrices.find((price => { return price.FoodPrice === result[j].CTMA_MACT })) == undefined)
                                             FoodPrices.push({
                                                 FoodDetailID: result[j].CTMA_MACT,
                                                 FoodPrice: result[j].CTMA_MUCGIA,
