@@ -58,7 +58,7 @@ router.post('/update-cart', verifyToken, async (req, res) => {
     if (count > 0)
         try {
             await new Cart()
-                .addToCart(
+                .updateCart(
                     customerid,
                     mactma,
                     count
