@@ -64,6 +64,24 @@ class Cart {
         });
     }
 
+    async updateCart(CustomerId, CartFoodDetail, CartFoodCount) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = `
+                update CHI_TIET_GIO_MON_AN set CTGMA_SOLUONG = ? where KH_MAKH = ? AND CTMA_MACT = ?`;
+                dbConnect.query(sql, [CartFoodCount, CustomerId, CartFoodDetail], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        resolve(result.affectedRows)
+                    }
+
+                })
+            })
+        });
+    }
+
     async deleteFromCart(CustomerId, CartFoodDetail) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {

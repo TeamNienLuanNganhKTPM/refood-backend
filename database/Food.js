@@ -38,7 +38,7 @@ class Food {
                                     FoodImageUrl: result[i].AMA_URL,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
-                                
+
                                 let FoodPrices = [{
                                     FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
@@ -65,7 +65,8 @@ class Food {
                                     FoodId: result[i].MA_MAMON,
                                     FoodName: result[i].MA_TENMON,
                                     FoodSlug: result[i].FOOD_SLUG,
-                                    FoodType: result[i].LMA_TENLOAI,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
                                     FoodThumb: result[i].AMA_URL,
@@ -135,7 +136,8 @@ class Food {
                                     FoodId: result[i].MA_MAMON,
                                     FoodName: result[i].MA_TENMON,
                                     FoodSlug: result[i].FOOD_SLUG,
-                                    FoodType: result[i].LMA_TENLOAI,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
                                     FoodThumb: result[i].AMA_URL,
@@ -204,7 +206,8 @@ class Food {
                                     FoodId: result[i].MA_MAMON,
                                     FoodName: result[i].MA_TENMON,
                                     FoodSlug: result[i].FOOD_SLUG,
-                                    FoodType: result[i].LMA_TENLOAI,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
                                     FoodThumb: result[i].AMA_URL,
@@ -272,7 +275,8 @@ class Food {
                                     FoodId: result[i].MA_MAMON,
                                     FoodName: result[i].MA_TENMON,
                                     FoodSlug: result[i].FOOD_SLUG,
-                                    FoodType: result[i].LMA_TENLOAI,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
                                     FoodThumb: result[i].AMA_URL,
@@ -340,7 +344,8 @@ class Food {
                                     FoodId: result[i].MA_MAMON,
                                     FoodName: result[i].MA_TENMON,
                                     FoodSlug: result[i].FOOD_SLUG,
-                                    FoodType: result[i].LMA_TENLOAI,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
                                     FoodThumb: result[i].AMA_URL,
@@ -409,7 +414,8 @@ class Food {
                                     FoodId: result[i].MA_MAMON,
                                     FoodName: result[i].MA_TENMON,
                                     FoodSlug: result[i].FOOD_SLUG,
-                                    FoodType: result[i].LMA_TENLOAI,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
                                     FoodThumb: result[i].AMA_URL,
@@ -515,7 +521,8 @@ class Food {
                                     FoodId: result[i].MA_MAMON,
                                     FoodName: result[i].MA_TENMON,
                                     FoodSlug: result[i].FOOD_SLUG,
-                                    FoodType: result[i].LMA_TENLOAI,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
                                     FoodThumb: result[i].AMA_URL,
@@ -538,7 +545,7 @@ class Food {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
                 let sql = `SELECT * FROM
-                                    (SELECT ma.MA_MAMON, ma.LMA_MALOAI, ma.MA_TENMON, toSlug(ma.MA_TENMON) FOOD_SLUG, ma.MA_MOTA, lma.LMA_TENLOAI,  ctma.CTMA_MACT, ctma.CTMA_KHAUPHAN, ctma.CTMA_MUCGIA, ama.AMA_URL, ama.AMA_TIEU_DE , AVG(DG_DIEMDG) as DANH_GIA FROM mon_an ma 
+                                    (SELECT ma.MA_MAMON, ma.LMA_MALOAI, ma.MA_TENMON, toSlug(ma.MA_TENMON) FOOD_SLUG, ma.MA_MOTA, lma.LMA_TENLOAI, lma.LMA_MALOAI, ctma.CTMA_MACT, ctma.CTMA_KHAUPHAN, ctma.CTMA_MUCGIA, ama.AMA_URL, ama.AMA_TIEU_DE , AVG(DG_DIEMDG) as DANH_GIA FROM mon_an ma 
                                     JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
                                     JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
                                     JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
@@ -606,7 +613,8 @@ class Food {
                                     FoodId: result[i].MA_MAMON,
                                     FoodName: result[i].MA_TENMON,
                                     FoodSlug: result[i].FOOD_SLUG,
-                                    FoodType: result[i].LMA_TENLOAI,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
                                     FoodThumb: result[i].AMA_URL,
@@ -679,7 +687,8 @@ class Food {
                                     FoodId: result[i].MA_MAMON,
                                     FoodName: result[i].MA_TENMON,
                                     FoodSlug: result[i].FOOD_SLUG,
-                                    FoodType: result[i].LMA_TENLOAI,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
                                     FoodThumb: result[i].AMA_URL,
