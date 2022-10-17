@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router();
 const verifyAdmin = require('../authentication/auth')
 const Food = require('../database/Food');
-// const { uploadImage } = require('../function/driveAPI')
+const { uploadImage } = require('../function/driveAPI')
 router.get('/food-detail/:foodKey', verifyAdmin, async (req, res) => {
     const foodKey = req.params.foodKey
     console.log(foodKey)
@@ -45,18 +45,18 @@ router.get('/food-detail/:foodKey', verifyAdmin, async (req, res) => {
         });
 })
 
-// router.put('/food-edit', verifyAdmin, async (req, res) => {
-//     //https://drive.google.com/uc?id=
-//     const { foodid, foodname, foodtype, foodpriceration, fooddescription, foodimagedeleted, fooddetaildeleted } = req.body
-//     console.log(foodpriceration)
-//     req.files.foodimage.forEach(async (image) => {
-//         let id
-//         await uploadImage(image)
-//             .then((imageID) => {
-//                 id = imageID
-//             })
-//         console.log(`https://drive.google.com/uc?id=${id}`)
-//     })
+router.put('/food-edit', verifyAdmin, async (req, res) => {
+    //https://drive.google.com/uc?id=
+    const { foodid, foodname, foodtype, foodpriceration, fooddescription, foodimagedeleted, fooddetaildeleted } = req.body
+    console.log(foodpriceration)
+    req.files.foodimage.forEach(async (image) => {
+        let id
+        await uploadImage(image)
+            .then((imageID) => {
+                id = imageID
+            })
+        console.log(`https://drive.google.com/uc?id=${id}`)
+    })
 
-// })
+})
 module.exports = router

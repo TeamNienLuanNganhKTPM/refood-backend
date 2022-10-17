@@ -1,5 +1,5 @@
 const dbConnect = require('./dbconnect');
-
+const Food = require('./Food')
 class Admin {
     constructor(AdminID, AdminName, AdminPhoneNumber, AdminPassword) {
         this.AdminID = AdminID
