@@ -112,6 +112,7 @@ class Food {
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
@@ -182,6 +183,7 @@ class Food {
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
@@ -251,6 +253,7 @@ class Food {
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
@@ -320,6 +323,7 @@ class Food {
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
@@ -390,6 +394,7 @@ class Food {
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
@@ -497,6 +502,7 @@ class Food {
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
