@@ -35,7 +35,7 @@ class Food {
                             for (let i = 0; i < result.length - 1; i = checked + 1) {
                                 checked = i;
                                 let FoodImages = [{
-                                    FoodImageUrl: result[i].AMA_URL,
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
 
@@ -46,9 +46,9 @@ class Food {
                                 }];
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
-                                        if (FoodImages.find((image => { return image.FoodImageUrl === result[j].AMA_URL })) == undefined)
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
                                             FoodImages.push({
-                                                FoodImageUrl: result[j].AMA_URL,
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
                                         if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
@@ -69,7 +69,7 @@ class Food {
                                     FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
-                                    FoodThumb: result[i].AMA_URL,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
                                 })
@@ -108,7 +108,7 @@ class Food {
                             for (let i = 0; i < result.length; i = checked + 1) {
                                 checked = i;
                                 let FoodImages = [{
-                                    FoodImageUrl: result[i].AMA_URL,
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
@@ -118,9 +118,9 @@ class Food {
                                 }];
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
-                                        if (FoodImages.find((image => { return image.FoodImageUrl === result[j].AMA_URL })) == undefined)
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
                                             FoodImages.push({
-                                                FoodImageUrl: result[j].AMA_URL,
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
                                         if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
@@ -141,7 +141,7 @@ class Food {
                                     FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
-                                    FoodThumb: result[i].AMA_URL,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
                                 })
@@ -179,7 +179,7 @@ class Food {
                             for (let i = 0; i < result.length; i = checked + 1) {
                                 checked = i;
                                 let FoodImages = [{
-                                    FoodImageUrl: result[i].AMA_URL,
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
@@ -189,9 +189,9 @@ class Food {
                                 }];
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
-                                        if (FoodImages.find((image => { return image.FoodImageUrl === result[j].AMA_URL })) == undefined)
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
                                             FoodImages.push({
-                                                FoodImageUrl: result[j].AMA_URL,
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
                                         if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
@@ -212,7 +212,7 @@ class Food {
                                     FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
-                                    FoodThumb: result[i].AMA_URL,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
                                 })
@@ -249,7 +249,7 @@ class Food {
                             for (let i = 0; i < result.length; i = checked + 1) {
                                 checked = i;
                                 let FoodImages = [{
-                                    FoodImageUrl: result[i].AMA_URL,
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
@@ -259,9 +259,9 @@ class Food {
                                 }];
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
-                                        if (FoodImages.find((image => { return image.FoodImageUrl === result[j].AMA_URL })) == undefined)
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
                                             FoodImages.push({
-                                                FoodImageUrl: result[j].AMA_URL,
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
                                         if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
@@ -282,7 +282,7 @@ class Food {
                                     FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
-                                    FoodThumb: result[i].AMA_URL,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
                                 })
@@ -319,7 +319,7 @@ class Food {
                             for (let i = 0; i < result.length; i = checked + 1) {
                                 checked = i;
                                 let FoodImages = [{
-                                    FoodImageUrl: result[i].AMA_URL,
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
@@ -329,9 +329,9 @@ class Food {
                                 }];
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
-                                        if (FoodImages.find((image => { return image.FoodImageUrl === result[j].AMA_URL })) == undefined)
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
                                             FoodImages.push({
-                                                FoodImageUrl: result[j].AMA_URL,
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
                                         if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
@@ -352,7 +352,7 @@ class Food {
                                     FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
-                                    FoodThumb: result[i].AMA_URL,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
                                 })
@@ -390,7 +390,7 @@ class Food {
                             for (let i = 0; i < result.length; i = checked + 1) {
                                 checked = i;
                                 let FoodImages = [{
-                                    FoodImageUrl: result[i].AMA_URL,
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
@@ -400,9 +400,9 @@ class Food {
                                 }];
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
-                                        if (FoodImages.find((image => { return image.FoodImageUrl === result[j].AMA_URL })) == undefined)
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
                                             FoodImages.push({
-                                                FoodImageUrl: result[j].AMA_URL,
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
                                         if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
@@ -423,7 +423,7 @@ class Food {
                                     FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
-                                    FoodThumb: result[i].AMA_URL,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
                                 })
@@ -498,7 +498,7 @@ class Food {
                             for (let i = 0; i < result.length; i = checked + 1) {
                                 checked = i;
                                 let FoodImages = [{
-                                    FoodImageUrl: result[i].AMA_URL,
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
@@ -508,9 +508,9 @@ class Food {
                                 }];
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
-                                        if (FoodImages.find((image => { return image.FoodImageUrl === result[j].AMA_URL })) == undefined)
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
                                             FoodImages.push({
-                                                FoodImageUrl: result[j].AMA_URL,
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
                                         if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
@@ -531,7 +531,7 @@ class Food {
                                     FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
-                                    FoodThumb: result[i].AMA_URL,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
                                 })
@@ -575,7 +575,7 @@ class Food {
                             for (let i = 0; i < result.length; i = checked + 1) {
                                 checked = i;
                                 let FoodImages = [{
-                                    FoodImageUrl: result[i].AMA_URL,
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
@@ -592,9 +592,9 @@ class Food {
                                 // }]
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
-                                        if (FoodImages.find((image => { return image.FoodImageUrl === result[j].AMA_URL })) == undefined)
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
                                             FoodImages.push({
-                                                FoodImageUrl: result[j].AMA_URL,
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
                                         if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
@@ -623,7 +623,7 @@ class Food {
                                     FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
-                                    FoodThumb: result[i].AMA_URL,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
                                     // FoodComments
@@ -664,7 +664,7 @@ class Food {
                             for (let i = 0; i < result.length; i = checked + 1) {
                                 checked = i;
                                 let FoodImages = [{
-                                    FoodImageUrl: result[i].AMA_URL,
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodImageDescription: result[i].AMA_TIEU_DE
                                 }];
                                 let FoodPrices = [{
@@ -674,9 +674,9 @@ class Food {
                                 }];
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
-                                        if (FoodImages.find((image => { return image.FoodImageUrl === result[j].AMA_URL })) == undefined)
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
                                             FoodImages.push({
-                                                FoodImageUrl: result[j].AMA_URL,
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
                                                 FoodImageDescription: result[j].AMA_TIEU_DE
                                             })
                                         if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
@@ -697,7 +697,7 @@ class Food {
                                     FoodTypeID: result[i].LMA_MALOAI,
                                     FoodDescription: result[i].MA_MOTA,
                                     FoodReviewAvg: result[i].DANH_GIA,
-                                    FoodThumb: result[i].AMA_URL,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
                                     // FoodComments
@@ -714,6 +714,131 @@ class Food {
         });
     }
 
+    async checkIfFoodIsExits(FoodId) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                let sql = `SELECT * FROM MON_AN WHERE MA_MAMON = ?`;
+                dbConnect.query(sql, [FoodId], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        if (result.length > 0) {
+                            resolve(true);
+                        }
+                        else
+                            resolve(false)
+                    }
+
+                })
+            })
+        })
+
+    }
+
+    async updateFood(FoodId, FoodName, FoodType, FoodDescription) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                let sql = `call CAP_NHAT_MON_AN(?,?,?,?)`;
+                dbConnect.query(sql, [FoodId, FoodName, FoodType, FoodDescription], (err, result) => {
+                    if (err)
+                        return reject(err)
+                    resolve(true)
+                })
+            })
+        })
+    }
+
+    async deleteAllFoodDetail(FoodId) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                let sql = `delete from CHI_TIET_MON_AN  where MA_MAMON = ?`;
+                dbConnect.query(sql, [FoodId], (err, result) => {
+                    if (err)
+                        return reject(err)
+                    resolve(true)
+                })
+            })
+        })
+    }
+
+    async updateFoodDetail(FoodId, FoodPrice, FoodRation) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                let sql = `call THEM_CHI_TIET_MON_AN(?,?,?)`;
+                dbConnect.query(sql, [FoodId, FoodPrice, FoodRation], (err, result) => {
+                    if (err)
+                        return reject(err)
+                    resolve(true)
+                })
+            })
+        })
+    }
+
+    async deleteFoodImage(FoodId, FoodImageUrl) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                let sql = `DELETE FROM ANH_MON_AN WHERE MA_MAMON = ? AND AMA_URL = ?`;
+                dbConnect.query(sql, [FoodId, FoodImageUrl], (err, result) => {
+                    if (err)
+                        return reject(err)
+                    resolve(true)
+                })
+            })
+        })
+    }
+
+    async deleteAllFoodImage(FoodId) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                let sql = `DELETE FROM ANH_MON_AN WHERE MA_MAMON = ?`;
+                dbConnect.query(sql, [FoodId], (err, result) => {
+                    if (err)
+                        return reject(err)
+                    resolve(true)
+                })
+            })
+        })
+    }
+
+    async updateFoodImage(FoodId, FoodImageUrl, FoodImageDescription) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                let sql = `call THEM_ANH_MON_AN(?,?,?)`;
+                dbConnect.query(sql, [FoodId, FoodImageUrl, FoodImageDescription], (err, result) => {
+                    if (err)
+                        return reject(err)
+                    resolve(true)
+                })
+            })
+        })
+    }
+
+    async addFood(FoodType, FoodName, FoodDescription) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                let sql = `call THEM_MON_AN(?,?,?,@FoodId)`;
+                dbConnect.query(sql, [FoodType, FoodName, FoodDescription], (err, result) => {
+                    if (err)
+                        return reject(err)
+                    resolve(result)
+                })
+            })
+        })
+    }
+
+    async deleteFood(FoodId) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                let sql = `DELETE FROM MON_AN WHERE MA_MAMON = ?`;
+                dbConnect.query(sql, [FoodId], (err, result) => {
+                    if (err)
+                        return reject(err)
+                    resolve(true)
+                })
+            })
+        })
+    }
 }
 
 module.exports = Food;
