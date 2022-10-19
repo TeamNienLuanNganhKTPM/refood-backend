@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express.Router();
 const verifyAdmin = require('../authentication/auth')
-const Food = require('../database/Food');
+const Food = require('../database/Food')
+const FoodType = require('../database/FoodType')
 const { uploadImage } = require('../function/driveAPI')
 const { checkText } = require('../function/Inspect')
 router.get('/food-detail/:foodKey', verifyAdmin, async (req, res) => {
@@ -62,7 +63,7 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
                 } catch (err) {
                     return res.status(400).json({
                         success: false,
-                        message: 'Có lỗi xảy ra khi cập nhật món ăn'
+                        message: 'Tên món ăn đã trùng'
                     });
                 }
                 //Cập nhật chi tiết khẩu phần món
@@ -277,6 +278,134 @@ router.delete('/food-delete', verifyAdmin, async (req, res) => {
         return res.status(400).json({
             success: false,
             message: 'Món ăn không tồn tại'
+        });
+})
+
+router.post('/food-type-add', verifyAdmin, async (req, res) => {
+    const { foodtypename, foodtypedescription } = req.body;
+    if (!checkText(foodtypename))
+        return res.status(400).json({ success: false, message: 'Tên loại món ăn không hợp lệ' })
+    else if (!checkText(foodtypedescription))
+        return res.status(400).json({ success: false, message: 'Mô tả loại món ăn không hợp lệ' })
+    else
+        try {
+            let foundedFoodType
+            await new FoodType()
+                .find(foodtypename)
+                .then((foodtype) => {
+                    foundedFoodType = foodtype
+                })
+                .catch((err) => setImmediate(() => { throw err; }))
+            if (foundedFoodType.FoodTypeId == undefined) {
+                await new FoodType()
+                    .create(foodtypename, foodtypedescription)
+                    .then((foodtype) => {
+                        return res.status(200).json({
+                            success: true, message: 'Thêm loại món ăn thành công',
+                            foodtype_info: foodtype
+                        });
+                    })
+                    .catch((err) => setImmediate(() => { throw err; }))
+
+            } else
+                return res.status(400).json({ success: false, message: 'Tên loại món ăn bị trùng' });
+        } catch (err) {
+            return res.status(500).json({ success: false, message: 'Vui lòng thử lại sau' })
+        }
+
+})
+
+router.put('/food-type-edit', verifyAdmin, async (req, res) => {
+    const { foodtypeid, foodtypename, foodtypedescription } = req.body;
+    if (!checkText(foodtypename))
+        return res.status(400).json({ success: false, message: 'Tên loại món ăn không hợp lệ' })
+    else if (!checkText(foodtypedescription))
+        return res.status(400).json({ success: false, message: 'Mô tả loại món ăn không hợp lệ' })
+    else
+        try {
+            let foundedFoodType
+            await new FoodType()
+                .findByID(foodtypeid)
+                .then((foodtype) => {
+                    foundedFoodType = foodtype
+                })
+            let foundedFoodTypeByName
+            await new FoodType()
+                .findByName(foodtypename)
+                .then((foodtype) => {
+                    foundedFoodTypeByName = foodtype
+                })
+                .catch((err) => setImmediate(() => { throw err; }))
+            if (foundedFoodType.FoodTypeId == undefined) {
+                return res.status(400).json({ success: false, message: 'Loại món ăn không tồn tại' });
+            } else if (foundedFoodTypeByName.FoodTypeName == foodtypename && foundedFoodTypeByName.FoodTypeId != foundedFoodType.FoodTypeId)
+                return res.status(400).json({ success: false, message: 'Tên loại món đã trùng' });
+            else {
+                await new FoodType()
+                    .update(foodtypeid, foodtypename, foodtypedescription)
+                    .then((result) => {
+                        if (result)
+                            return res.status(200).json({
+                                success: true,
+                                message: 'Cập nhật loại món ăn thành công'
+                            });
+                    })
+                    .catch((err) => setImmediate(() => { throw err; }))
+            }
+        } catch (err) {
+            return res.status(500).json({ success: false, message: 'Vui lòng thử lại sau' })
+        }
+})
+
+router.get('/get-foodtypes', verifyAdmin, async (req, res) => {
+    await new FoodType()
+        .getAll()
+        .then((foodtypes) => {
+            return res.status(200).json({
+                success: true,
+                foodtypes
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            // throw err; 
+            return res.status(400).json({
+                success: false,
+                message: 'Vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.delete('/food-type-delete', verifyAdmin, async (req, res) => {
+    const { foodtypeid } = req.body
+    let isExistFoodtype
+    await new FoodType().checkIfFoodtypeIsExits(foodtypeid)
+        .then((result) => {
+            isExistFoodtype = result
+        })
+    if (isExistFoodtype) {
+        let isExistFood
+        await new FoodType().checkIfExistFoodWithFoodtype(foodtypeid)
+            .then((result) => {
+                isExistFood = result
+            })
+        if (isExistFood)
+            return res.status(400).json({
+                success: false,
+                message: 'Loại món ăn này đang chứa các món ăn khác!'
+            });
+        else {
+            await new FoodType().deleteFoodType(foodtypeid)
+                .then((result) => {
+                    return res.status(200).json({
+                        success: false,
+                        message: 'Xóa loại món ăn thành công'
+                    });
+                })
+        }
+    } else
+        return res.status(400).json({
+            success: false,
+            message: 'Loại món ăn không tồn tại'
         });
 })
 module.exports = router
