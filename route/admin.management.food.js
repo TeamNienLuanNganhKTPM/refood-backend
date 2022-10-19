@@ -118,12 +118,12 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
                             success: true,
                             message: 'Cập nhật món ăn thành công, vui lòng đợi giây lát khi ảnh đang được tải lên'
                         });
-                    } else if (req.files.foodimage.length) {
+                    } else if (req.files.foodimage) {
                         let id
                         await uploadImage(req.files.foodimage)
                             .then(async (imageID) => {
                                 id = imageID
-                                await new Food().updateFoodImage(foodid, id, foodimagedescription[index])
+                                await new Food().updateFoodImage(foodid, id, foodimagedescription)
                             })
                         return res.status(200).json({
                             success: true,

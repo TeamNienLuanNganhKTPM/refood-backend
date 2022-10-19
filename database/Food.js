@@ -551,7 +551,7 @@ class Food {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
                 let sql = `SELECT * FROM
-                                    (SELECT ma.MA_MAMON, ma.LMA_MALOAI, ma.MA_TENMON, toSlug(ma.MA_TENMON) FOOD_SLUG, ma.MA_MOTA, lma.LMA_TENLOAI, lma.LMA_MALOAI, ctma.CTMA_MACT, ctma.CTMA_KHAUPHAN, ctma.CTMA_MUCGIA, ama.AMA_URL, ama.AMA_TIEU_DE , AVG(DG_DIEMDG) as DANH_GIA FROM mon_an ma 
+                                    (SELECT ma.MA_MAMON, ma.LMA_MALOAI, ma.MA_TENMON, toSlug(ma.MA_TENMON) FOOD_SLUG, ma.MA_MOTA, lma.LMA_TENLOAI, ctma.CTMA_MACT, ctma.CTMA_KHAUPHAN, ctma.CTMA_MUCGIA, ama.AMA_URL, ama.AMA_TIEU_DE , AVG(DG_DIEMDG) as DANH_GIA FROM mon_an ma 
                                     JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
                                     JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
                                     JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
@@ -559,10 +559,6 @@ class Food {
                                     GROUP BY ma.MA_MAMON, ctma.CTMA_MACT, ama.AMA_URL) 
                                     as temp
                             WHERE MA_MAMON = ?`;
-                //, bl.BL_MABL, bl.KH_MAKH, kh.KH_TENKH, bl.BL_NOIDUNG, bl.BL_THOIGIANBL 
-                // ORDER BY BL_THOIGIANBL desc`;
-                // FULL OUTER JOIN binh_luan bl ON temp.MA_MAMON = bl.MA_MAMON
-                // JOIN khach_hang kh ON kh.KH_MAKH = bl.KH_MAKH
                 dbConnect.query(sql, [FoodId], (err, result) => {
                     if (err) {
                         console.log(err)
@@ -583,13 +579,6 @@ class Food {
                                     FoodPrice: result[i].CTMA_MUCGIA,
                                     FoodRation: result[i].CTMA_KHAUPHAN,
                                 }];
-                                // let FoodComments = [{
-                                //     FoodCommentID: result[i].BL_MABL,
-                                //     FoodCommentOwnerID: result[i].KH_MAKH,
-                                //     FoodCommentOwnerName: result[i].KH_TENKH,
-                                //     FoodCommentContent: result[i].BL_NOIDUNG,
-                                //     FoodCommentTime: result[i].BL_THOIGIANBL,
-                                // }]
                                 for (let j = i + 1; j < result.length; j++) {
                                     if (result[i].MA_MAMON === result[j].MA_MAMON) {
                                         if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
@@ -603,14 +592,6 @@ class Food {
                                                 FoodPrice: result[j].CTMA_MUCGIA,
                                                 FoodRation: result[j].CTMA_KHAUPHAN,
                                             })
-                                        // if (FoodComments.find((comment => { return comment.FoodCommentId === result[j].BL_MABL })) == undefined)
-                                        //     FoodComments.push({
-                                        //         FoodCommentId: result[j].BL_MABL,
-                                        //         FoodCommentOwnerID: result[j].KH_MAKH,
-                                        //         FoodCommentOwnerName: result[j].KH_TENKH,
-                                        //         FoodCommentContent: result[j].BL_NOIDUNG,
-                                        //         FoodCommentTime: result[j].BL_THOIGIANBL,
-                                        //     })
                                         checked = j;
                                     } else
                                         break
@@ -626,7 +607,6 @@ class Food {
                                     FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
                                     FoodPrices,
                                     FoodImages
-                                    // FoodComments
                                 })
                             }
                             resolve(foods);
