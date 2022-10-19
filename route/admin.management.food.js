@@ -104,7 +104,7 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
                         await new Food().deleteFoodImage(foodid, foodimagedeleted)
                     }
 
-                    if (Array.isArray(req.files.foodimage.length)) {
+                    if (Array.isArray(req.files.foodimage)) {
                         req.files.foodimage.forEach(async (image, index) => {
                             let id
                             await uploadImage(image)
@@ -205,8 +205,8 @@ router.post('/food-add', verifyAdmin, async (req, res) => {
             }
             //thêm hình ảnh món
             try {
-                if (Array.isArray(req.files.foodimage.length)) {
-                    foodimage.forEach(async (image, index) => {
+                if (Array.isArray(req.files.foodimage)) {
+                    req.files.foodimage.forEach(async (image, index) => {
                         let id
                         await uploadImage(image)
                             .then(async (imageID) => {
