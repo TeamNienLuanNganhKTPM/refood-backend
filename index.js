@@ -8,6 +8,7 @@ const PORT = process.env.PORT
 const auth = require('./route/auth');
 const food = require('./route/food');
 const cart = require('./route/cart');
+const order = require('./route/order');
 const adminAuth = require('./route/admin.auth');
 const adminManagementUser = require('./route/admin.management.user');
 const adminManagementFood = require('./route/admin.management.food');
@@ -39,4 +40,5 @@ app.use('/admin/management/food', adminManagementFood);
 app.use('/auth', auth);
 app.use('/food', food);
 app.use('/cart', cart);
+app.use('/order', order);
 app.use('/cantho-units', canthounit);

@@ -46,6 +46,32 @@ class Cart {
         });
     }
 
+    async getCartSubTotal(CustomerId) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = `
+                    SELECT ma.MA_MAMON, ma.MA_TENMON, toSlug(ma.MA_TENMON) FOODSLUG, lma.LMA_TENLOAI, ma.MA_MOTA, ctgmna.CTMA_MACT, ctma.CTMA_MUCGIA, ctma.CTMA_KHAUPHAN, ctgmna.CTGMA_SOLUONG, ama.AMA_URL, ama.AMA_TIEU_DE
+                    FROM chi_tiet_gio_mon_an ctgmna 
+                    JOIN chi_tiet_mon_an ctma ON ctgmna.CTMA_MACT = ctma.CTMA_MACT
+                    JOIN mon_an ma ON ma.MA_MAMON = ctma.MA_MAMON
+                    JOIN anh_mon_an ama ON ama.MA_MAMON = ma.MA_MAMON
+                    JOIN loai_mon_an lma on lma.LMA_MALOAI = ma.LMA_MALOAI
+                    WHERE KH_MAKH = ?
+                    GROUP BY (CTMA_MACT)`;
+                dbConnect.query(sql, [CustomerId], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    let cartSubTotal = 0
+                    result.forEach(element => {
+                        cartSubTotal += element.CTMA_MUCGIA * element.CTGMA_SOLUONG
+                    })
+                    resolve(cartSubTotal)
+                })
+            })
+        });
+    }
+
     async addToCart(CustomerId, CartFoodDetail, CartFoodCount) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
@@ -68,15 +94,12 @@ class Cart {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
                 const sql = `
-                update CHI_TIET_GIO_MON_AN set CTGMA_SOLUONG = ? where KH_MAKH = ? AND CTMA_MACT = ?`;
+                update chi_tiet_gio_mon_an set CTGMA_SOLUONG = ? where KH_MAKH = ? AND CTMA_MACT = ?`;
                 dbConnect.query(sql, [CartFoodCount, CustomerId, CartFoodDetail], (err, result) => {
                     if (err) {
                         return reject(err)
                     }
-                    else {
-                        resolve(result.affectedRows)
-                    }
-
+                    resolve(result.affectedRows)
                 })
             })
         });

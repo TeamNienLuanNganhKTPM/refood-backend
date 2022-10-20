@@ -30,7 +30,6 @@ router.post('/add-to-cart', verifyToken, async (req, res) => {
                         });
                 })
                 .catch((err) => setImmediate(() => {
-                    console.log(err)
                     return res.status(400).json({
                         success: false,
                         message: 'Món ăn không tồn tại'
@@ -72,14 +71,13 @@ router.post('/update-cart', verifyToken, async (req, res) => {
                     else
                         return res.status(400).json({
                             success: false,
-                            message: 'Món ăn không tồn tại'
+                            message: 'Món ăn không tồn tại trong giỏ món ăn'
                         });
                 })
                 .catch((err) => setImmediate(() => {
-                    console.log(err)
                     return res.status(400).json({
                         success: false,
-                        message: 'Món ăn không tồn tại'
+                        message: 'Món ăn không tồn tại trong giỏ món ăn'
                     });
                 }))
         } catch (err) {
@@ -114,14 +112,14 @@ router.get('/get-cart-detail', verifyToken, async (req, res) => {
                 else
                     return res.status(400).json({
                         success: false,
-                        message: 'Món ăn không tồn tại'
+                        message: 'Chưa có món ăn trong giỏ của Quý Khách'
                     });
             })
             .catch((err) => setImmediate(() => {
                 console.log(err)
                 return res.status(400).json({
                     success: false,
-                    message: 'Món ăn không tồn tại'
+                    message: 'Quý khách vui lòng thử lại sau'
                 });
             }))
     } catch (err) {

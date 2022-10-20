@@ -1,4 +1,5 @@
-const dbConnect = require('./dbconnect');
+const dbConnect = require('./dbconnect')
+// const dbConnect = mysql.createConnection(dbconfig)
 
 class Address {
     constructor(AddressId, CustomerName, CustomerPhone, AddressNumAndStreetName, AddressWard, AddressDistrict, isDefaultAddress) {
@@ -136,6 +137,23 @@ class Address {
                         resolve(result.affectedRows)
                     }
 
+                })
+            })
+        });
+    }
+
+    async verifyAccountAddress(CustomerId, AddressId) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = `
+                SELECT * FROM dia_chi WHERE DC_MADC = ? AND KH_MAKH = ?`;
+                dbConnect.query(sql, [AddressId, CustomerId], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    if (result.length >= 1)
+                        resolve(true)
+                    resolve(false)
                 })
             })
         });
