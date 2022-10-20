@@ -28,8 +28,6 @@ class Food {
                     }
                     else {
                         if (result.length > 0) {
-                            console.log(result)
-
                             let foods = [];
                             let checked = 0;
                             for (let i = 0; i < result.length - 1; i = checked + 1) {
@@ -561,7 +559,6 @@ class Food {
                             WHERE MA_MAMON = ?`;
                 dbConnect.query(sql, [FoodId], (err, result) => {
                     if (err) {
-                        console.log(err)
                         return reject(err)
                     }
                     else {
@@ -634,7 +631,6 @@ class Food {
                             WHERE MA_MAMON = FindFoodIdBySlug(?)`;
                 dbConnect.query(sql, [tenMonAn], (err, result) => {
                     if (err) {
-                        console.log(err)
                         return reject(err)
                     }
                     else {
