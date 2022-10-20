@@ -621,7 +621,8 @@ class Food {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
                 let sql = `SELECT * FROM
-                                    (SELECT ma.MA_MAMON, ma.LMA_MALOAI, ma.MA_TENMON, toSlug(ma.MA_TENMON) FOOD_SLUG, ma.MA_MOTA, lma.LMA_TENLOAI,  ctma.CTMA_MACT, ctma.CTMA_KHAUPHAN, ctma.CTMA_MUCGIA, ama.AMA_URL, ama.AMA_TIEU_DE , AVG(DG_DIEMDG) as DANH_GIA FROM mon_an ma 
+                                    (SELECT ma.MA_MAMON, ma.LMA_MALOAI, ma.MA_TENMON, toSlug(ma.MA_TENMON) FOOD_SLUG, ma.MA_MOTA, lma.LMA_TENLOAI,  ctma.CTMA_MACT, ctma.CTMA_KHAUPHAN, ctma.CTMA_MUCGIA, ama.AMA_URL, ama.AMA_TIEU_DE , AVG(DG_DIEMDG) as DANH_GIA 
+                                    FROM mon_an ma 
                                     JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
                                     JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
                                     JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
@@ -693,7 +694,7 @@ class Food {
     async checkIfFoodIsExits(FoodId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                let sql = `SELECT * FROM MON_AN WHERE MA_MAMON = ?`;
+                let sql = `SELECT * FROM mon_an WHERE MA_MAMON = ?`;
                 dbConnect.query(sql, [FoodId], (err, result) => {
                     if (err) {
                         return reject(err)
@@ -728,7 +729,7 @@ class Food {
     async deleteAllFoodDetail(FoodId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                let sql = `delete from CHI_TIET_MON_AN  where MA_MAMON = ?`;
+                let sql = `delete from chi_tiet_mon_an  where MA_MAMON = ?`;
                 dbConnect.query(sql, [FoodId], (err, result) => {
                     if (err)
                         return reject(err)
@@ -754,7 +755,7 @@ class Food {
     async deleteFoodImage(FoodId, FoodImageUrl) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                let sql = `DELETE FROM ANH_MON_AN WHERE MA_MAMON = ? AND AMA_URL = ?`;
+                let sql = `DELETE FROM anh_mon_an WHERE MA_MAMON = ? AND AMA_URL = ?`;
                 dbConnect.query(sql, [FoodId, FoodImageUrl], (err, result) => {
                     if (err)
                         return reject(err)
@@ -767,7 +768,7 @@ class Food {
     async deleteAllFoodImage(FoodId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                let sql = `DELETE FROM ANH_MON_AN WHERE MA_MAMON = ?`;
+                let sql = `DELETE FROM anh_mon_an WHERE MA_MAMON = ?`;
                 dbConnect.query(sql, [FoodId], (err, result) => {
                     if (err)
                         return reject(err)
@@ -806,7 +807,7 @@ class Food {
     async deleteFood(FoodId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                let sql = `DELETE FROM MON_AN WHERE MA_MAMON = ?`;
+                let sql = `DELETE FROM mon_an WHERE MA_MAMON = ?`;
                 dbConnect.query(sql, [FoodId], (err, result) => {
                     if (err)
                         return reject(err)

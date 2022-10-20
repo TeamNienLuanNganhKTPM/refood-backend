@@ -118,7 +118,7 @@ class FoodType {
     async deleteFoodType(FoodTypeId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                let sql = `DELETE FROM LOAI_MON_AN WHERE LMA_MALOAI = ?`;
+                let sql = `DELETE FROM loai_mon_an WHERE LMA_MALOAI = ?`;
                 dbConnect.query(sql, [FoodTypeId], (err, result) => {
                     if (err)
                         return reject(err)
@@ -130,7 +130,7 @@ class FoodType {
     async checkIfExistFoodWithFoodtype(FoodTypeId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                let sql = `SELECT * FROM MON_AN WHERE LMA_MALOAI = ?`;
+                let sql = `SELECT * FROM mon_an WHERE LMA_MALOAI = ?`;
                 dbConnect.query(sql, [FoodTypeId], (err, result) => {
                     if (err) {
                         return reject(err)
@@ -150,7 +150,7 @@ class FoodType {
     async checkIfFoodtypeIsExits(FoodTypeId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                let sql = `SELECT * FROM LOAI_MON_AN WHERE LMA_MALOAI = ?`;
+                let sql = `SELECT * FROM loai_mon_an WHERE LMA_MALOAI = ?`;
                 dbConnect.query(sql, [FoodTypeId], (err, result) => {
                     if (err) {
                         return reject(err)

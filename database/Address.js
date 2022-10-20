@@ -13,7 +13,7 @@ class Address {
     async getAllAddresses(CustomerId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = `SELECT * FROM DIA_CHI WHERE KH_MAKH = ?`;
+                const sql = `SELECT * FROM dia_chi WHERE KH_MAKH = ?`;
                 dbConnect.query(sql, [CustomerId], (err, result) => {
                     if (err) {
                         return reject(err)
@@ -48,7 +48,7 @@ class Address {
     async getAddressDetail(CustomerId, AddressId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = `SELECT * FROM DIA_CHI WHERE KH_MAKH = ? AND DC_MADC = ?`;
+                const sql = `SELECT * FROM dia_chi WHERE KH_MAKH = ? AND DC_MADC = ?`;
                 dbConnect.query(sql, [CustomerId, AddressId], (err, result) => {
                     if (err) {
                         return reject(err)
