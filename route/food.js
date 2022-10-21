@@ -7,6 +7,7 @@ const Comment = require('../database/Comment')
 const Cart = require('../database/Cart')
 const verifyToken = require('../authentication/auth')
 const intersectMany = require('../function/arrayFunction')
+const { checkText } = require('../function/Inspect')
 router.get('/get-foodtypes', async (req, res) => {
     await new FoodType()
         .getAll()
@@ -375,7 +376,7 @@ router.post('/add-comment', verifyToken, async (req, res) => {
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
     const customerid = req.header('CustomerId')
     if (customerid == decoded.CustomerId)
-        if (content.match(/^[0-9a-zA-ZàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ,.'-]+$/u) == null)
+        if (!checkText(content))
             return res.status(400).json({ success: false, message: 'Bình luận có chứa ký tự không hợp lệ!' })
         else {
             try {

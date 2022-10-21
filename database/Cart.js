@@ -31,7 +31,7 @@ class Cart {
                                 FoodType: element.LMA_TENLOAI,
                                 FoodSlug: element.FOODSLUG,
                                 FoodDescription: element.MA_MOTA,
-                                FoodThumb: element.AMA_URL,
+                                FoodThumb: `https://drive.google.com/uc?id=${element.AMA_URL}`,
                                 FoodThumbDescription: element.AMA_TIEU_DE,
                                 FoodDetailID: element.CTMA_MACT,
                                 FoodPrice: element.CTMA_MUCGIA,
