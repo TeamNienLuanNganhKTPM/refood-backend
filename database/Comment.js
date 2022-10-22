@@ -117,17 +117,14 @@ class Comment {
     async deleteComment(CommentId, FoodId, CustomerId) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = `
-                        DELETE FROM binh_luan
-                        WHERE BL_MABL = ? AND MA_MAMON = ? AND KH_MAKH = ?`;
+                const sql = `call XOA_BINH_LUAN(?,?,?)`;
+                // `DELETE FROM binh_luan
+                // WHERE BL_MABL = ? AND MA_MAMON = ? AND KH_MAKH = ?`;
                 dbConnect.query(sql, [CommentId, FoodId, CustomerId], (err, result) => {
                     if (err) {
                         return reject(err)
                     }
-                    else {
-                        resolve(result.affectedRows)
-                    }
-
+                    resolve(result.affectedRows)
                 })
             })
         });

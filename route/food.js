@@ -56,7 +56,6 @@ router.get('/get-popular-foods/:limit', async (req, res) => {
             });
         })
         .catch((err) => setImmediate(() => {
-            console.log(err)
             return res.status(400).json({
                 success: false,
                 message: 'Quý khách vui lòng thử lại sau'
@@ -254,7 +253,6 @@ router.get('/find-foods', async (req, res) => {
                     foodByReview = foodByReview.concat(foundedFoods)
             })
             .catch((err) => setImmediate(() => {
-                console.log(err)
                 return res.status(400).json({
                     success: false,
                     message: 'Quý khách vui lòng thử lại sau'
@@ -305,7 +303,6 @@ router.get('/filter-foods', async (req, res) => {
 
 router.get('/get-food-details/:foodKey', async (req, res) => {
     const foodKey = req.params.foodKey
-    console.log(foodKey)
     if (foodKey != null)
         await new Food()
             .getDetailsSlug(foodKey)
@@ -553,7 +550,6 @@ router.delete('/delete-comment', verifyToken, async (req, res) => {
                     });
             })
             .catch((err) => setImmediate(() => {
-                console.log(err)
                 return res.status(400).json({
                     success: false,
                     message: 'Quý khách vui lòng thử lại sau'

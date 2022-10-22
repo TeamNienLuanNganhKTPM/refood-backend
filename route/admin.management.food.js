@@ -5,6 +5,38 @@ const Food = require('../database/Food')
 const FoodType = require('../database/FoodType')
 const { uploadImage } = require('../function/driveAPI')
 const { checkText } = require('../function/Inspect')
+
+router.get('/get-foods/:pageCur/:numOnPage', async (req, res) => {
+    await new Food()
+        .getAll()
+        .then((foods) => {
+            let numberToGet = req.params.numOnPage //số lượng món ăn trên 1 trang
+            let pageNum = Math.ceil(foods.length / numberToGet);
+            const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+            let foodss = []
+            let curIndex = (pageCur - 1) * numberToGet
+            let count = 0
+            while (foods[curIndex] != null && count < numberToGet) {
+                foodss.push(foods[curIndex])
+                curIndex++
+                count++
+            }
+            return res.status(200).json({
+                success: true,
+                countOnPage: foodss.length,
+                pageCur,
+                pageNum,
+                foods: foodss,
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
 router.get('/food-detail/:foodKey', verifyAdmin, async (req, res) => {
     const foodKey = req.params.foodKey
     console.log(foodKey)

@@ -94,7 +94,7 @@ class FoodType {
     async getAll() {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
-                const sql = "SELECT *, toSlug(LMA_TENLOAI) SLUG FROM loai_mon_an";
+                const sql = "SELECT *, toSlug(LMA_TENLOAI) SLUG FROM loai_mon_an ORDER BY count DESC";
                 dbConnect.query(sql, [], (err, result) => {
                     if (err) {
                         return reject(err)
