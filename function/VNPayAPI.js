@@ -58,7 +58,6 @@ const verifyHashcode = (query) => {
     var signData = querystring.stringify(vnp_Params, { encode: false });
     var hmac = crypto.createHmac("sha512", secretKey);
     var signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
-    console.log(signed)
     if (secureHash === signed)
         return true
     return false

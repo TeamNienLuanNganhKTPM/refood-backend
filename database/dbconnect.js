@@ -19,17 +19,8 @@ var dbConnect
 //     console.log("Connected!");
 // });
 const createConnection = () => {
-    return mysql.createConnection({
-        host: '103.130.216.100',
-        user: 'quananc1_refooddb',
-        password: 'Lieutuanvu',
-        database: 'quananc1_refood'
-    })
+    return mysql.createConnection(dbconfig)
 }
-// const handleDisconnect = () => {
-
-// }
-// handleDisconnect();
 dbConnect = createConnection();
 dbConnect.connect((err) => {
     if (err) {

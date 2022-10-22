@@ -84,6 +84,157 @@ class Food {
         });
     }
 
+    async getPopularFood(limit) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
+                JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
+                JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
+                JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
+                LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON 
+                WHERE ma.MA_MAMON IN 
+                    (select ctma.MA_MAMON from chi_tiet_mon_an ctma 
+                        join (SELECT CTMA_MACT, count(CTMA_MACT) Popular 
+                        FROM chi_tiet_don_dat_mon 
+                        GROUP BY (CTMA_MACT) 
+                        ORDER BY Popular DESC LIMIT ?) top 
+                        on ctma.CTMA_MACT = top.CTMA_MACT 
+                        join mon_an ma on ma.MA_MAMON = ctma.MA_MAMON) 
+                GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL`;
+                dbConnect.query(sql, [limit], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        if (result.length > 0) {
+                            let foods = [];
+                            let checked = 0;
+                            for (let i = 0; i < result.length - 1; i = checked + 1) {
+                                checked = i;
+                                let FoodImages = [{
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
+                                    FoodImageDescription: result[i].AMA_TIEU_DE
+                                }];
+
+                                let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
+                                    FoodPrice: result[i].CTMA_MUCGIA,
+                                    FoodRation: result[i].CTMA_KHAUPHAN,
+                                }];
+                                for (let j = i + 1; j < result.length; j++) {
+                                    if (result[i].MA_MAMON === result[j].MA_MAMON) {
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
+                                            FoodImages.push({
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
+                                                FoodImageDescription: result[j].AMA_TIEU_DE
+                                            })
+                                        if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
+                                            FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
+                                                FoodPrice: result[j].CTMA_MUCGIA,
+                                                FoodRation: result[j].CTMA_KHAUPHAN,
+                                            })
+                                        checked = j;
+                                    } else
+                                        break
+                                }
+                                foods.push({
+                                    FoodId: result[i].MA_MAMON,
+                                    FoodName: result[i].MA_TENMON,
+                                    FoodSlug: result[i].FOOD_SLUG,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
+                                    FoodDescription: result[i].MA_MOTA,
+                                    FoodReviewAvg: result[i].DANH_GIA,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
+                                    FoodPrices,
+                                    FoodImages
+                                })
+
+                            }
+                            resolve(foods);
+                        }
+                        else
+                            resolve(new Food())
+                    }
+
+                })
+            })
+        });
+    }
+
+    async getNewFood(limit) {
+        return new Promise((resolve, reject) => {
+            dbConnect.connect(() => {
+                const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
+                JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
+                JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
+                JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
+                LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON 
+                GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL
+                order by ma.count DESC`;
+                dbConnect.query(sql, [limit], (err, result) => {
+                    if (err) {
+                        return reject(err)
+                    }
+                    else {
+                        if (result.length > 0) {
+                            let foods = [];
+                            let checked = 0;
+                            for (let i = 0; i < result.length - 1; i = checked + 1) {
+                                checked = i;
+                                let FoodImages = [{
+                                    FoodImageUrl: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
+                                    FoodImageDescription: result[i].AMA_TIEU_DE
+                                }];
+
+                                let FoodPrices = [{
+                                    FoodDetailID: result[i].CTMA_MACT,
+                                    FoodPrice: result[i].CTMA_MUCGIA,
+                                    FoodRation: result[i].CTMA_KHAUPHAN,
+                                }];
+                                for (let j = i + 1; j < result.length; j++) {
+                                    if (result[i].MA_MAMON === result[j].MA_MAMON) {
+                                        if (FoodImages.find((image => { return image.FoodImageUrl === `https://drive.google.com/uc?id=${result[j].AMA_URL}` })) == undefined)
+                                            FoodImages.push({
+                                                FoodImageUrl: `https://drive.google.com/uc?id=${result[j].AMA_URL}`,
+                                                FoodImageDescription: result[j].AMA_TIEU_DE
+                                            })
+                                        if (FoodPrices.find((price => { return price.FoodDetailID === result[j].CTMA_MACT })) == undefined)
+                                            FoodPrices.push({
+                                                FoodDetailID: result[j].CTMA_MACT,
+                                                FoodPrice: result[j].CTMA_MUCGIA,
+                                                FoodRation: result[j].CTMA_KHAUPHAN,
+                                            })
+                                        checked = j;
+                                    } else
+                                        break
+                                }
+                                foods.push({
+                                    FoodId: result[i].MA_MAMON,
+                                    FoodName: result[i].MA_TENMON,
+                                    FoodSlug: result[i].FOOD_SLUG,
+                                    FoodTypeName: result[i].LMA_TENLOAI,
+                                    FoodTypeID: result[i].LMA_MALOAI,
+                                    FoodDescription: result[i].MA_MOTA,
+                                    FoodReviewAvg: result[i].DANH_GIA,
+                                    FoodThumb: `https://drive.google.com/uc?id=${result[i].AMA_URL}`,
+                                    FoodPrices,
+                                    FoodImages
+                                })
+
+                            }
+                            resolve(foods);
+                        }
+                        else
+                            resolve(new Food())
+                    }
+
+                })
+            })
+        });
+    }
+
     async findByFoodName(FoodName) {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {

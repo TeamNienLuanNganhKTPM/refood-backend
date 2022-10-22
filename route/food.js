@@ -45,6 +45,79 @@ router.get('/get-foods', async (req, res) => {
         }))
 })
 
+router.get('/get-popular-foods/:limit', async (req, res) => {
+    let numberToGet = req.params.limit
+    await new Food()
+        .getPopularFood(parseInt(numberToGet))
+        .then((foods) => {
+            return res.status(200).json({
+                success: true,
+                foods
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            console.log(err)
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.get('/get-popular-foods', async (req, res) => {
+    let numberToGet = 5
+    await new Food()
+        .getPopularFood(numberToGet)
+        .then((foods) => {
+            return res.status(200).json({
+                success: true,
+                foods
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.get('/get-new-foods/:limit', async (req, res) => {
+    let numberToGet = req.params.limit
+    await new Food()
+        .getNewFood(numberToGet)
+        .then((foods) => {
+            return res.status(200).json({
+                success: true,
+                foods
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
+router.get('/get-new-foods', async (req, res) => {
+    let numberToGet = 5
+    await new Food()
+        .getNewFood(numberToGet)
+        .then((foods) => {
+            return res.status(200).json({
+                success: true,
+                foods
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Quý khách vui lòng thử lại sau'
+            });
+        }))
+})
+
 router.get('/get-foods/:pageCur', async (req, res) => {
     await new Food()
         .getAll()
