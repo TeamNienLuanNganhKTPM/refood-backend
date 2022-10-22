@@ -20,7 +20,7 @@ class Comment {
                 JOIN khach_hang kh ON kh.KH_MAKH = bl.KH_MAKH 
                 LEFT OUTER JOIN tra_loi_bl tlbl ON bl.BL_MABL = tlbl.BL_MABL 
                 LEFT OUTER JOIN nhan_vien_phu_trach nvpt on tlbl.NVPT_MANV = nvpt.NVPT_MANV
-                WHERE MA_MAMON = ?`;
+                WHERE MA_MAMON = ? ORDER BY BL_THOIGIANBL DESC`;
                 dbConnect.query(sql, [FoodId], (err, result) => {
                     if (err) {
                         return reject(err)

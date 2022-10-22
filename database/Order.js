@@ -129,12 +129,12 @@ class Order {
         return new Promise((resolve, reject) => {
             dbConnect.connect(() => {
                 const sql = `UPDATE don_dat_mon SET DDM_TRANGTHAI = 'Đã thanh toán bằng VNPay', DDM_PTTT = ? 
-                            WHERE DDM_MADON = ?`;
+                            WHERE DDM_MADON = ? AND DDM_TRANGTHAI <> 'Đã thanh toán bằng VNPay'`;
                 dbConnect.query(sql, [TransID, OrderID], (err, result) => {
                     if (err) {
                         return reject(err)
                     }
-                    resolve((result.affectedRow))
+                    resolve((result.affectedRow) ? true : false)
                 })
             })
         });

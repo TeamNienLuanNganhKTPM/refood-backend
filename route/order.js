@@ -6,7 +6,7 @@ const Address = require('../database/Address')
 const verifyToken = require('../authentication/auth')
 const { checkText, checkPaymentMethod } = require('../function/Inspect');
 const Order = require('../database/Order');
-const { VNPayURL } = require('../function/VNPayAPI')
+const { VNPayURL, verifyHashcode } = require('../function/VNPayAPI')
 router.post('/create-food-order', verifyToken, async (req, res) => {
     const { addressid, ordernote, paymentmethod } = req.body
     //paymentmethod vnpay || cod
@@ -195,7 +195,7 @@ router.get('/pay-for-food-order/:orderid', async (req, res) => {
                                     if (subtotal != false) {
                                         var tzoffset = (new Date()).getTimezoneOffset() * 60000;
                                         var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
-                                        res.redirect(VNPayURL(orderid, parseInt(subtotal), 
+                                        res.redirect(VNPayURL(orderid, parseInt(subtotal),
                                             localISOTime.replace('T', ' ').replace('-', '').replace('-', '').replace(' ', '').replace(':', '').replace(':', '').replace(':', '').substring(0, 14)
                                         ))
                                     } else {
@@ -229,21 +229,37 @@ router.get('/pay-for-food-order/:orderid', async (req, res) => {
 })
 
 router.get('/order-payment-result', async (req, res) => {
-    console.log(req.query)
     let payment = req.query
     if (payment.vnp_TransactionStatus == '00') {
-        await new Order().paid(payment.vnp_TxnRef, payment.vnp_TransactionNo)
-            .then((result) => {
-                return res.status(200).json({
-                    success: true,
-                    message: 'Thanh toán thành công, ReFood xin cảm ơn Quý Khách',
-                    payment_info: {
-                        order_id: payment.vnp_TxnRef,
-                        order_subtotal: payment.vnp_Amount,
-                        order_bank: payment.vnp_BankCode,
-                        order_paiddate: payment.vnp_PayDate
-                    }
+        if (verifyHashcode(payment))
+            await new Order().paid(payment.vnp_TxnRef, payment.vnp_TransactionNo)
+                .then((result) => {
+                    if (result)
+                        return res.status(200).json({
+                            success: true,
+                            message: 'Đơn đã được thanh toán, ReFood xin cảm ơn Quý Khách',
+                            payment_info: {
+                                order_id: payment.vnp_TxnRef,
+                                order_subtotal: payment.vnp_Amount,
+                                order_bank: payment.vnp_BankCode,
+                                order_paiddate: payment.vnp_PayDate
+                            }
+                        })
+                    return res.status(200).json({
+                        success: true,
+                        message: 'Đơn đã được thanh toán trước đó, ReFood xin cảm ơn Quý Khách',
+                        payment_info: {
+                            order_id: payment.vnp_TxnRef,
+                            order_subtotal: payment.vnp_Amount,
+                            order_bank: payment.vnp_BankCode,
+                            order_paiddate: payment.vnp_PayDate
+                        }
+                    })
                 })
+        else
+            return res.status(400).json({
+                success: false,
+                message: 'Thanh toán không thành công, Quý Khách vui lòng thanh toán lại đơn hàng'
             })
     } else
         return res.status(400).json({
