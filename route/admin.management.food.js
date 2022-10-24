@@ -389,13 +389,27 @@ router.put('/food-type-edit', verifyAdmin, async (req, res) => {
         }
 })
 
-router.get('/get-foodtypes', verifyAdmin, async (req, res) => {
+router.get('/get-foodtypes/:pageCur/:numOnPage', verifyAdmin, async (req, res) => {
     await new FoodType()
         .getAll()
         .then((foodtypes) => {
+            let numberToGet = req.params.numOnPage //số lượng món ăn trên 1 trang
+            let pageNum = Math.ceil(foodtypes.length / numberToGet);
+            const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+            let foodtypess = []
+            let curIndex = (pageCur - 1) * numberToGet
+            let count = 0
+            while (foodtypes[curIndex] != null && count < numberToGet) {
+                foodtypess.push(foodtypes[curIndex])
+                curIndex++
+                count++
+            }
             return res.status(200).json({
                 success: true,
-                foodtypes
+                countOnPage: foodtypess.length,
+                pageCur,
+                pageNum,
+                foodtypes: foodtypess
             });
         })
         .catch((err) => setImmediate(() => {

@@ -63,6 +63,27 @@ router.post('/create-food-order', verifyToken, async (req, res) => {
         })
 })
 
+router.get('/get-food-order-detail/:orderid', verifyToken, async (req, res) => {
+    const orderid = req.params.orderid
+    const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
+    const customerid = decoded.CustomerId
+    await new Order().verifyOrderWithCustomer(customerid, orderid)
+        .then(async (result) => {
+            if (result)
+                await new Order().get(orderid)
+                    .then((order) => {
+                        return res.status(200).json({
+                            success: true,
+                            order_detail: order
+                        })
+                    })
+            return res.status(400).json({
+                success: false,
+                message: 'Đơn hàng không phù hợp!'
+            })
+        })
+})
+
 router.put('/update-food-order/:orderid', verifyToken, async (req, res) => {
     const { addressid, ordernote, paymentmethod } = req.body
     const orderid = req.params.orderid
@@ -180,10 +201,10 @@ router.get('/get-food-order-payment-status/:orderid', verifyToken, async (req, r
 
 })
 
-router.get('/pay-for-food-order/:orderid', verifyToken, async (req, res) => {
+router.get('/pay-for-food-order/:orderid', async (req, res) => {
     const orderid = req.params.orderid
-    const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
-    const customerid = decoded.CustomerId
+    // const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
+    const customerid = 'KH1'
     await new Order().verifyOrderWithCustomer(customerid, orderid)
         .then(async (result) => {
             if (result) {
