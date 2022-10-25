@@ -77,10 +77,11 @@ router.get('/get-food-order-detail/:orderid', verifyToken, async (req, res) => {
                             order_detail: order
                         })
                     })
-            return res.status(400).json({
-                success: false,
-                message: 'Đơn hàng không phù hợp!'
-            })
+            else
+                return res.status(400).json({
+                    success: false,
+                    message: 'Đơn hàng không phù hợp!'
+                })
         })
 })
 
