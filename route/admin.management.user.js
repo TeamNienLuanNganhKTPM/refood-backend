@@ -55,4 +55,8 @@ router.put('/user-active', verifyAdmin, async (req, res) => {
             });
         }))
 })
+
+router.get('/get-all-users', verifyAdmin, async (req, res) => {
+
+})
 module.exports = router

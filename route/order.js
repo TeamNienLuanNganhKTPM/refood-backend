@@ -277,6 +277,54 @@ router.get('/pay-for-food-order/:orderid', verifyToken, async (req, res) => {
 
 })
 
+router.post('/pay-for-food-order', verifyToken, async (req, res) => {
+    const { orderid } = req.body
+    const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
+    const customerid = decoded.CustomerId
+    await new Order().verifyOrderWithCustomer(customerid, orderid)
+        .then(async (result) => {
+            if (result) {
+                await new Order().getOrderPaymentStatus(orderid)
+                    .then(async (result) => {
+                        if (result == 'vnpay' || result == 'cod') {
+                            await new Order().getOrderSubTotal(orderid)
+                                .then((subtotal) => {
+                                    if (subtotal != false) {
+                                        var tzoffset = (new Date()).getTimezoneOffset() * 60000;
+                                        var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
+                                        res.redirect(VNPayURL(orderid, parseInt(subtotal),
+                                            localISOTime.replace('T', ' ').replace('-', '').replace('-', '').replace(' ', '').replace(':', '').replace(':', '').replace(':', '').substring(0, 14)
+                                        ))
+                                    } else {
+                                        return res.status(400).json({
+                                            success: false,
+                                            message: 'Đơn hàng lỗi do không có món ăn!'
+                                        })
+                                    }
+                                })
+
+                        } else if (result == false) {
+                            return res.status(400).json({
+                                success: false,
+                                message: 'Đơn hàng đã bị hủy!'
+                            })
+                        } else {
+                            return res.status(400).json({
+                                success: false,
+                                message: 'Đơn hàng đã được thanh toán!'
+                            })
+                        }
+                    })
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Đơn hàng không phù hợp!'
+                })
+            }
+        })
+
+})
+
 router.get('/order-payment-result', verifyToken, async (req, res) => {
     let payment = req.query
     if (payment.vnp_TransactionStatus == '00') {
