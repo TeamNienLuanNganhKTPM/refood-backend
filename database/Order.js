@@ -1,5 +1,4 @@
 const dbConnect = require('./dbconnect')
-// const dbConnect = mysql.createConnection(dbconfig)
 
 class Order {
     constructor(OrderID, OrderCustomer, OrderAdress, OrderAdmin, OrderDate, OrderDetails, OrderNote, OrderSubTotal, OrderPaymentMethod, OrderState) {
@@ -39,6 +38,29 @@ class Order {
         });
     }
 
+    async getAll(OrderCustomer) {
+        return new Promise((resolve, reject) => {
+            let sql = `SELECT * FROM don_dat_mon WHERE KH_MAKH = ?
+                        ORDER BY DDM_NGAYGIO DESC`
+            dbConnect.query(sql, [OrderCustomer], (err, result) => {
+                if (err)
+                    return reject(err)
+                let order = []
+                result.forEach(e => {
+                    order.push({
+                        OrderID: e.DDM_MADON,
+                        OrderDate: e.DDM_NGAYGIO,
+                        OrderNote: e.DDM_NOTE,
+                        OrderSubTotal: e.DDM_TONGTIEN,
+                        OrderState: e.DDM_TRANGTHAI,
+                        OrderPaymentMethod: e.DDM_PTTT == 'cod' ? 'Thanh toán COD' : 'Thanh toán qua VNPay'
+                    })
+                })
+                resolve(order)
+            })
+        })
+    }
+
     async get(OrderID) {
         return new Promise((resolve, reject) => {
             const sql = `
@@ -66,7 +88,6 @@ class Order {
                     return reject(err)
                 }
                 let OrderDetails = []
-                let order = {}
                 result.forEach(e => {
                     OrderDetails.push({
                         FoodId: e.MA_MAMON,
@@ -77,21 +98,9 @@ class Order {
                         FoodPrice: e.CTMA_MUCGIA,
                         FoodRation: e.CTMA_KHAUPHAN,
                         FoodQuantity: e.CTD_SOLUONG,
-                        Total: parseInt(e.CTMA_KHAUPHAN) * parseInt(e.CTD_SOLUONG)
+                        Total: parseInt(e.CTMA_MUCGIA) * parseInt(e.CTD_SOLUONG)
                     })
                 })
-                order = {
-                    OrderID: result[0]['DDM_MADON'],
-                    OrderDate: result[0]['DDM_NGAYGIO'],
-                    OrderSubtotal: result[0]['DDM_TONGTIEN'],
-                    OrderNote: result[0]['DDM_NOTE'],
-                    OrderPaymentMethod: result[0]['DDM_PTTT'],
-                    OrderState: result[0]['DDM_TRANGTHAI'],
-                    OrderCustomer: `${result[0]['KH_TENKH']} - ${result[0]['KH_SDT']}`,
-                    OrderAdress: `${result[0]['DC_NGUOINHAN']} - ${result[0]['DC_SDTNHAN']} - ${result[0]['DC_DIACHI']} - ${result[0]['DC_TENPHUONG']} - ${result[0]['DC_TENQUANHUYEN']}`,
-                    OrderAdmin: result[0]['NVPT_TENNV'],
-                    OrderDetails
-                }
                 resolve(new Order(
                     result[0]['DDM_MADON'],
                     `${result[0]['KH_TENKH']} - ${result[0]['KH_SDT']}`,
@@ -101,7 +110,7 @@ class Order {
                     OrderDetails,
                     result[0]['DDM_NOTE'],
                     result[0]['DDM_TONGTIEN'],
-                    result[0]['DDM_PTTT'],
+                    result[0]['DDM_PTTT'] == 'cod' ? 'Thanh toán COD' : 'Thanh toán qua VNPay',
                     result[0]['DDM_TRANGTHAI']
                 ))
             })
@@ -184,13 +193,13 @@ class Order {
 
     async paid(OrderID, TransID) {
         return new Promise((resolve, reject) => {
-            const sql = `UPDATE don_dat_mon SET DDM_TRANGTHAI = 'Đã thanh toán bằng VNPay', DDM_PTTT = ?
+            const sql = `UPDATE don_dat_mon SET DDM_PTTT = ?
                         WHERE DDM_MADON = ? AND DDM_TRANGTHAI <> 'Đã thanh toán bằng VNPay'`;
             dbConnect.query(sql, [TransID, OrderID], (err, result) => {
                 if (err) {
                     return reject(err)
                 }
-                resolve((result.affectedRow) ? true : false)
+                resolve((result.changedRows == 1) ? true : false)
             })
         });
     }

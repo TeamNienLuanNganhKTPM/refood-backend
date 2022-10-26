@@ -6,7 +6,8 @@ const Address = require('../database/Address')
 const verifyToken = require('../authentication/auth')
 const { checkText, checkPaymentMethod } = require('../function/Inspect');
 const Order = require('../database/Order');
-const { VNPayURL, verifyHashcode } = require('../function/VNPayAPI')
+const { VNPayURL, verifyHashcode } = require('../function/VNPayAPI');
+const Invoice = require('../database/Invoice');
 router.post('/create-food-order', verifyToken, async (req, res) => {
     const { addressid, ordernote, paymentmethod } = req.body
     //paymentmethod vnpay || cod
@@ -60,6 +61,32 @@ router.post('/create-food-order', verifyToken, async (req, res) => {
                         }
                     })
             }
+        })
+})
+
+router.get('/get-all-food-orders/:pageCur/:numOnPage', verifyToken, async (req, res) => {
+    const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
+    const customerid = decoded.CustomerId
+    await new Order().getAll(customerid)
+        .then((orders) => {
+            let numberToGet = parseInt(req.params.numOnPage) //số lượng món ăn trên 1 trang
+            let pageNum = Math.ceil(orders.length / numberToGet);
+            const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+            let orderss = []
+            let curIndex = (pageCur - 1) * numberToGet
+            let count = 0
+            while (orders[curIndex] != null && count < numberToGet) {
+                orderss.push(orders[curIndex])
+                curIndex++
+                count++
+            }
+            return res.status(200).json({
+                success: true,
+                countOnPage: orderss.length,
+                pageCur,
+                pageNum,
+                orders: orderss,
+            });
         })
 })
 
@@ -202,7 +229,7 @@ router.get('/get-food-order-payment-status/:orderid', verifyToken, async (req, r
 
 })
 
-router.get('/pay-for-food-order/:orderid', async (req, res) => {
+router.get('/pay-for-food-order/:orderid', verifyToken, async (req, res) => {
     const orderid = req.params.orderid
     // const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
     const customerid = 'KH1'
@@ -250,16 +277,33 @@ router.get('/pay-for-food-order/:orderid', async (req, res) => {
 
 })
 
-router.get('/order-payment-result', async (req, res) => {
+router.get('/order-payment-result', verifyToken, async (req, res) => {
     let payment = req.query
     if (payment.vnp_TransactionStatus == '00') {
         if (verifyHashcode(payment))
             await new Order().paid(payment.vnp_TxnRef, payment.vnp_TransactionNo)
-                .then((result) => {
-                    if (result)
+                .then(async (result) => {
+                    if (result) {
+                        await new Invoice().create(payment.vnp_TxnRef)
+                            .then((invoiceid) => {
+                                return res.status(200).json({
+                                    success: true,
+                                    message: 'Đơn đã được thanh toán, ReFood xin cảm ơn Quý Khách',
+                                    payment_info: {
+                                        order_id: payment.vnp_TxnRef,
+                                        invoice_id: invoiceid,
+                                        order_subtotal: payment.vnp_Amount,
+                                        order_bank: payment.vnp_BankCode,
+                                        order_paiddate: payment.vnp_PayDate
+                                    }
+                                })
+                            })
+
+                    }
+                    else
                         return res.status(200).json({
                             success: true,
-                            message: 'Đơn đã được thanh toán, ReFood xin cảm ơn Quý Khách',
+                            message: 'Đơn đã được thanh toán trước đó, ReFood xin cảm ơn Quý Khách',
                             payment_info: {
                                 order_id: payment.vnp_TxnRef,
                                 order_subtotal: payment.vnp_Amount,
@@ -267,16 +311,6 @@ router.get('/order-payment-result', async (req, res) => {
                                 order_paiddate: payment.vnp_PayDate
                             }
                         })
-                    return res.status(200).json({
-                        success: true,
-                        message: 'Đơn đã được thanh toán trước đó, ReFood xin cảm ơn Quý Khách',
-                        payment_info: {
-                            order_id: payment.vnp_TxnRef,
-                            order_subtotal: payment.vnp_Amount,
-                            order_bank: payment.vnp_BankCode,
-                            order_paiddate: payment.vnp_PayDate
-                        }
-                    })
                 })
         else
             return res.status(400).json({

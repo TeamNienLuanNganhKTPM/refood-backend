@@ -29,14 +29,14 @@ router.post('/login', async (req, res) => {
                 let passwordValid = sha(password) == foundedCustomer.CustomerPassword
                 //await argon2.verify(foundedCustomer.CustomerPassword, password)
                 if (!passwordValid)
-                    return res.status(400).json({ success: false, message: 'Incorrect password' })
+                    return res.status(400).json({ success: false, message: 'Mật khẩu chưa đúng' })
                 else {
                     if (foundedCustomer.CustomerState == 0)
-                        return res.status(400).json({ success: false, message: 'Customer user is blocked' })
+                        return res.status(400).json({ success: false, message: 'Tài khoản đã bị khóa' })
                     else {
                         let access_token = `${jwt.sign({ CustomerId: foundedCustomer.CustomerId }, process.env.ACCESS_TOKEN_SECRET)}`
                         return res.status(200).json({
-                            success: true, message: 'Login successfully',
+                            success: true, message: 'Đăng nhập thành công',
                             access_token,
                             customer_info: {
                                 CustomerId: foundedCustomer.CustomerId,
