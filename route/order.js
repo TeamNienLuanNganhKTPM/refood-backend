@@ -277,10 +277,10 @@ router.get('/pay-for-food-order/:orderid', verifyToken, async (req, res) => {
 
 })
 
-router.post('/pay-for-food-order', verifyToken, async (req, res) => {
+router.post('/pay-for-food-order', async (req, res) => {
     const { orderid } = req.body
-    const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
-    const customerid = decoded.CustomerId
+    // const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
+    const customerid = 'KH4'
     await new Order().verifyOrderWithCustomer(customerid, orderid)
         .then(async (result) => {
             if (result) {
