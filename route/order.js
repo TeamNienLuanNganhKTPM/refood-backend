@@ -13,7 +13,7 @@ router.post('/create-food-order', verifyToken, async (req, res) => {
     //paymentmethod vnpay || cod
     const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
     const customerid = decoded.CustomerId
-    if (!checkText(ordernote))
+    if (ordernote && !checkText(ordernote))
         return res.status(400).json({
             success: false,
             message: 'Nội dung ghi chú đơn không phù hợp'
