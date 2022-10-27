@@ -60,6 +60,29 @@ class Order {
             })
         })
     }
+    
+    async getAllForAdmin(){
+        return new Promise((resolve, reject) => {
+            let sql = `SELECT * FROM don_dat_mon
+                        ORDER BY DDM_NGAYGIO DESC`
+            dbConnect.query(sql, [OrderCustomer], (err, result) => {
+                if (err)
+                    return reject(err)
+                let order = []
+                result.forEach(e => {
+                    order.push({
+                        OrderID: e.DDM_MADON,
+                        OrderDate: e.DDM_NGAYGIO,
+                        OrderNote: e.DDM_NOTE,
+                        OrderSubTotal: e.DDM_TONGTIEN,
+                        OrderState: e.DDM_TRANGTHAI,
+                        OrderPaymentMethod: e.DDM_PTTT == 'cod' ? 'Thanh toán COD' : 'Thanh toán qua VNPay'
+                    })
+                })
+                resolve(order)
+            })
+        })
+    }
 
     async get(OrderID) {
         return new Promise((resolve, reject) => {
@@ -87,34 +110,51 @@ class Order {
                 if (err) {
                     return reject(err)
                 }
-                let OrderDetails = []
-                result.forEach(e => {
-                    OrderDetails.push({
-                        FoodId: e.MA_MAMON,
-                        FoodName: e.MA_TENMON,
-                        FoodSlug: e.MA_SLUG,
-                        FoodType: e.LMA_TENLOAI,
-                        FoodThumb: `https://drive.google.com/uc?id=${e.AMA_URL}`,
-                        FoodPrice: e.CTMA_MUCGIA,
-                        FoodRation: e.CTMA_KHAUPHAN,
-                        FoodQuantity: e.CTD_SOLUONG,
-                        Total: parseInt(e.CTMA_MUCGIA) * parseInt(e.CTD_SOLUONG)
+                if (result.length > 0) {
+                    let OrderDetails = []
+                    result.forEach(e => {
+                        OrderDetails.push({
+                            FoodId: e.MA_MAMON,
+                            FoodName: e.MA_TENMON,
+                            FoodSlug: e.MA_SLUG,
+                            FoodType: e.LMA_TENLOAI,
+                            FoodThumb: `https://drive.google.com/uc?id=${e.AMA_URL}`,
+                            FoodPrice: e.CTMA_MUCGIA,
+                            FoodRation: e.CTMA_KHAUPHAN,
+                            FoodQuantity: e.CTD_SOLUONG,
+                            Total: parseInt(e.CTMA_MUCGIA) * parseInt(e.CTD_SOLUONG)
+                        })
                     })
-                })
-                resolve(new Order(
-                    result[0]['DDM_MADON'],
-                    `${result[0]['KH_TENKH']} - ${result[0]['KH_SDT']}`,
-                    `${result[0]['DC_NGUOINHAN']} - ${result[0]['DC_SDTNHAN']} - ${result[0]['DC_DIACHI']} - ${result[0]['DC_TENPHUONG']} - ${result[0]['DC_TENQUANHUYEN']}`,
-                    result[0]['NVPT_TENNV'],
-                    result[0]['DDM_NGAYGIO'],
-                    OrderDetails,
-                    result[0]['DDM_NOTE'],
-                    result[0]['DDM_TONGTIEN'],
-                    result[0]['DDM_PTTT'] == 'cod' ? 'Thanh toán COD' : 'Thanh toán qua VNPay',
-                    result[0]['DDM_TRANGTHAI']
-                ))
+                    resolve(new Order(
+                        result[0]['DDM_MADON'],
+                        `${result[0]['KH_TENKH']} - ${result[0]['KH_SDT']}`,
+                        `${result[0]['DC_NGUOINHAN']} - ${result[0]['DC_SDTNHAN']} - ${result[0]['DC_DIACHI']} - ${result[0]['DC_TENPHUONG']} - ${result[0]['DC_TENQUANHUYEN']}`,
+                        result[0]['NVPT_TENNV'],
+                        result[0]['DDM_NGAYGIO'],
+                        OrderDetails,
+                        result[0]['DDM_NOTE'],
+                        result[0]['DDM_TONGTIEN'],
+                        result[0]['DDM_PTTT'] == 'cod' ? 'Thanh toán COD' : 'Thanh toán qua VNPay',
+                        result[0]['DDM_TRANGTHAI']
+                    ))
+                } else
+                    resolve(false)
+
             })
         })
+    }
+
+    async updateForAdmin(OrderID, OrderState){
+        return new Promise((resolve, reject) => {
+            const sql = `UPDATE don_dat_mon SET DDM_TRANGTHAI = ?
+                        WHERE DDM_MADON = ?`;
+            dbConnect.query(sql, [OrderState, OrderID], (err, result) => {
+                if (err) {
+                    return reject(err)
+                }
+                resolve((result.affectedRow))
+            })
+        });
     }
 
     async update(OrderCustomer, OrderID, OrderAddress, OrderNote, OrderPaymentMethod) {

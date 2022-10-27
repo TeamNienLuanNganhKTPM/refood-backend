@@ -244,9 +244,15 @@ router.get('/pay-for-food-order/:orderid', verifyToken, async (req, res) => {
                                     if (subtotal != false) {
                                         var tzoffset = (new Date()).getTimezoneOffset() * 60000;
                                         var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
-                                        res.redirect(VNPayURL(orderid, parseInt(subtotal),
-                                            localISOTime.replace('T', ' ').replace('-', '').replace('-', '').replace(' ', '').replace(':', '').replace(':', '').replace(':', '').substring(0, 14)
-                                        ))
+                                        // res.redirect(VNPayURL(orderid, parseInt(subtotal),
+                                        //     localISOTime.replace('T', ' ').replace('-', '').replace('-', '').replace(' ', '').replace(':', '').replace(':', '').replace(':', '').substring(0, 14)
+                                        // ))
+                                        return res.status(200).json({
+                                            success: true,
+                                            url: VNPayURL(orderid, parseInt(subtotal),
+                                                localISOTime.replace('T', ' ').replace('-', '').replace('-', '').replace(' ', '').replace(':', '').replace(':', '').replace(':', '').substring(0, 14)
+                                            )
+                                        })
                                     } else {
                                         return res.status(400).json({
                                             success: false,
@@ -292,7 +298,7 @@ router.post('/pay-for-food-order', verifyToken, async (req, res) => {
                                     if (subtotal != false) {
                                         var tzoffset = (new Date()).getTimezoneOffset() * 60000;
                                         var localISOTime = (new Date(Date.now() - tzoffset)).toISOString().slice(0, -1);
-                                        res.redirect(VNPayURL(orderid, parseInt(subtotal),
+                                        res.send(VNPayURL(orderid, parseInt(subtotal),
                                             localISOTime.replace('T', ' ').replace('-', '').replace('-', '').replace(' ', '').replace(':', '').replace(':', '').replace(':', '').substring(0, 14)
                                         ))
                                     } else {
