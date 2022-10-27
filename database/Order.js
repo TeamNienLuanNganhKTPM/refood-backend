@@ -1,5 +1,5 @@
 const dbConnect = require('./dbconnect')
-
+const { getOrderPaymentMethod, orderStatus } = require('../function/orderStatus')
 class Order {
     constructor(OrderID, OrderCustomer, OrderAdress, OrderAdmin, OrderDate, OrderDetails, OrderNote, OrderSubTotal, OrderPaymentMethod, OrderState) {
         this.OrderID = OrderID
@@ -52,20 +52,20 @@ class Order {
                         OrderDate: e.DDM_NGAYGIO,
                         OrderNote: e.DDM_NOTE,
                         OrderSubTotal: e.DDM_TONGTIEN,
-                        OrderState: e.DDM_TRANGTHAI,
-                        OrderPaymentMethod: e.DDM_PTTT == 'cod' ? 'Thanh toán COD' : 'Thanh toán qua VNPay'
+                        OrderState: orderStatus.indexOf(e.DDM_TRANGTHAI),
+                        OrderPaymentMethod: e.DDM_PTTT == 'cod' ? 'COD' : 'VNPay'
                     })
                 })
                 resolve(order)
             })
         })
     }
-    
-    async getAllForAdmin(){
+
+    async getAllForAdmin() {
         return new Promise((resolve, reject) => {
             let sql = `SELECT * FROM don_dat_mon
                         ORDER BY DDM_NGAYGIO DESC`
-            dbConnect.query(sql, [OrderCustomer], (err, result) => {
+            dbConnect.query(sql, [], (err, result) => {
                 if (err)
                     return reject(err)
                 let order = []
@@ -75,8 +75,8 @@ class Order {
                         OrderDate: e.DDM_NGAYGIO,
                         OrderNote: e.DDM_NOTE,
                         OrderSubTotal: e.DDM_TONGTIEN,
-                        OrderState: e.DDM_TRANGTHAI,
-                        OrderPaymentMethod: e.DDM_PTTT == 'cod' ? 'Thanh toán COD' : 'Thanh toán qua VNPay'
+                        OrderState: orderStatus.indexOf(e.DDM_TRANGTHAI),
+                        OrderPaymentMethod: getOrderPaymentMethod(e.DDM_PTTT)
                     })
                 })
                 resolve(order)
@@ -134,7 +134,7 @@ class Order {
                         OrderDetails,
                         result[0]['DDM_NOTE'],
                         result[0]['DDM_TONGTIEN'],
-                        result[0]['DDM_PTTT'] == 'cod' ? 'Thanh toán COD' : 'Thanh toán qua VNPay',
+                        getOrderPaymentMethod(result[0]['DDM_PTTT']),
                         result[0]['DDM_TRANGTHAI']
                     ))
                 } else
@@ -144,7 +144,7 @@ class Order {
         })
     }
 
-    async updateForAdmin(OrderID, OrderState){
+    async updateForAdmin(OrderID, OrderState) {
         return new Promise((resolve, reject) => {
             const sql = `UPDATE don_dat_mon SET DDM_TRANGTHAI = ?
                         WHERE DDM_MADON = ?`;
@@ -215,6 +215,18 @@ class Order {
                     return reject(err)
                 }
                 resolve((result.length > 0) ? result[0].DDM_PTTT : false)
+            })
+        })
+    }
+
+    async getOrderStatus(OrderID) {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM don_dat_mon WHERE DDM_MADON = ? AND DDM_TRANGTHAI <> 'Đã hủy'`;
+            dbConnect.query(sql, [OrderID], (err, result) => {
+                if (err) {
+                    return reject(err)
+                }
+                resolve((result.length > 0) ? result[0].DDM_TRANGTHAI : false)
             })
         })
     }

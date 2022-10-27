@@ -13,6 +13,7 @@ const party = require('./route/party');
 const adminAuth = require('./route/admin.auth');
 const adminManagementUser = require('./route/admin.management.user');
 const adminManagementFood = require('./route/admin.management.food');
+const adminManagementOrder = require('./route/admin.management.order')
 const canthounit = require('./route/cantho-units');
 app.use(express.json())
 ////JSON PARSER
@@ -38,6 +39,7 @@ app.get('/', (req, res) => {
 app.use('/admin/auth', adminAuth);
 app.use('/admin/management/user', adminManagementUser);
 app.use('/admin/management/food', adminManagementFood);
+app.use('/admin/management/order', adminManagementOrder);
 app.use('/auth', auth);
 app.use('/food', food);
 app.use('/cart', cart);

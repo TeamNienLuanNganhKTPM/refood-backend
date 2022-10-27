@@ -3,11 +3,11 @@ const router = express.Router();
 const jwt = require('jsonwebtoken')
 const Cart = require('../database/Cart')
 const Address = require('../database/Address')
+const Invoice = require('../database/Invoice');
+const Order = require('../database/Order');
 const verifyToken = require('../authentication/auth')
 const { checkText, checkPaymentMethod } = require('../function/Inspect');
-const Order = require('../database/Order');
 const { VNPayURL, verifyHashcode } = require('../function/VNPayAPI');
-const Invoice = require('../database/Invoice');
 router.post('/create-food-order', verifyToken, async (req, res) => {
     const { addressid, ordernote, paymentmethod } = req.body
     //paymentmethod vnpay || cod
