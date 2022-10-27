@@ -309,6 +309,7 @@ router.post('/pay-for-food-order', verifyToken, async (req, res) => {
 })
 
 router.get('/get-food-order-payment-status/:orderid', verifyToken, async (req, res) => {
+    const { paid } = req.query
     const orderid = req.params.orderid
     const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
     const customerid = decoded.CustomerId
@@ -317,10 +318,16 @@ router.get('/get-food-order-payment-status/:orderid', verifyToken, async (req, r
             if (result) {
                 await new Order().getOrderPaymentStatus(orderid)
                     .then((result) => {
-                        return res.status(200).json({
-                            success: true,
-                            payment_status: (result == 'vnpay') ? 'Chờ thanh toán bằng VNPay' : (result == 'cod') ? 'Chờ thanh toán bằng COD' : 'Đã thanh toán bằng VNPay'
-                        })
+                        if (paid == 'vnpay')
+                            return res.status(200).json({
+                                success: true,
+                                payment_status: (result != 'vnpay' && result != 'cod' && result != false) ? 'Đã thanh toán bằng VNPay' : 'Chưa thanh toán'
+                            })
+                        else
+                            return res.status(200).json({
+                                success: true,
+                                payment_status: (result == 'vnpay') ? 'Chờ thanh toán bằng VNPay' : (result == 'cod') ? 'Chờ thanh toán bằng COD' : (result == 'Đã thanh toán COD') ? 'Đã thanh toán COD' : 'Đã thanh toán bằng VNPay'
+                            })
                     })
             } else {
                 return res.status(400).json({
@@ -341,7 +348,7 @@ router.get('/order-payment-result', async (req, res) => {
                     if (result) {
                         await new Invoice().create(payment.vnp_TxnRef)
                             .then((invoiceid) => {
-                                return res.send(`<script>window.location='http://localhost:3000/user/order/${payment.vnp_TxnRef}'</script>`)
+                                return res.send(`<script>window.location='http://localhost:3000/user/order/${payment.vnp_TxnRef}?paid=vnpay'</script>`)
                                 // return res.status(200).json({
                                 //     success: true,
                                 //     message: 'Đơn đã được thanh toán, ReFood xin cảm ơn Quý Khách',
