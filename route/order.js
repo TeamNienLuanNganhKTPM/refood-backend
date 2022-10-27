@@ -331,7 +331,7 @@ router.post('/pay-for-food-order', verifyToken, async (req, res) => {
 
 })
 
-router.get('/order-payment-result', verifyToken, async (req, res) => {
+router.get('/order-payment-result', async (req, res) => {
     let payment = req.query
     if (payment.vnp_TransactionStatus == '00') {
         if (verifyHashcode(payment))
