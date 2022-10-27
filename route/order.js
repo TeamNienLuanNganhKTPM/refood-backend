@@ -309,7 +309,7 @@ router.post('/pay-for-food-order', verifyToken, async (req, res) => {
 })
 
 router.get('/get-food-order-payment-status/:orderid', verifyToken, async (req, res) => {
-    const { paid } = req.query
+    const paid = req.query.paid
     const orderid = req.params.orderid
     const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
     const customerid = decoded.CustomerId
