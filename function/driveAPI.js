@@ -3,9 +3,9 @@ const { google } = require('googleapis');
 const fs = require('fs')
 //Email: service.refood@gmail.com
 const GOOGLE_DRIVE_CLIENT_ID = `42778963400-vnuhirma3obgiajfjq4ddilb54rkequv.apps.googleusercontent.com`
-const GOOGLE_DRIVE_CLIENT_SECRET = `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`
+const GOOGLE_DRIVE_CLIENT_SECRET = `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`
 const GOOGLE_DRIVE_REDIRECT_URI = `https://developers.google.com/oauthplayground`
-const GOOGLE_DRIVE_REFRESH_TOKEN = `1//04rSP6G2a2F9JCgYIARAAGAQSNwF-L9IrakZQCslHKMFPQSPsVuiJhDZ1vztTBOu3xy1u_EWwcec2SDlxb5LGjONhZoIXE-NQQ0I`
+const GOOGLE_DRIVE_REFRESH_TOKEN = `1//043Kikl34cUBSCgYIARAAGAQSNwF-L9Ir5-gQYpL3WtgHv2zAW7R-TDfk0hIG1i7A9gnkgcMHMG8Tn--kSZ2dRWgB5APDBvAZUgI`
 const GOOGLE_DRIVE_FOLDER_ID = `1QSShxP6cf3D4WBdjUATKFEvU10ZX9XON`
 const oauth2Client = new google.auth.OAuth2(
     GOOGLE_DRIVE_CLIENT_ID,

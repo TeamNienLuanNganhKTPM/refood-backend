@@ -44,11 +44,13 @@ router.get('/food-detail/:foodKey', verifyAdmin, async (req, res) => {
         await new Food()
             .getDetailsSlug(foodKey)
             .then(async (food) => {
-                if (food.length > 0)
+                if (food.length > 0) {
+                    console.log(food)
                     return res.status(200).json({
                         success: true,
                         food_info: food[0]
                     });
+                }
                 else {
                     await new Food()
                         .getDetails(foodKey)
@@ -81,7 +83,7 @@ router.get('/food-detail/:foodKey', verifyAdmin, async (req, res) => {
 
 router.put('/food-edit', verifyAdmin, async (req, res) => {
     //https://drive.google.com/uc?id=
-    const { foodid, foodname, foodtype, foodpriceration, fooddescription, foodimagedescription, foodimagedeleted, fooddetaildeleted } = req.body
+    const { foodid, foodname, foodtype, foodpriceration, fooddescription, foodimagedeleted, fooddetaildeleted } = req.body
     let isExistFood
     await new Food().checkIfFoodIsExits(foodid)
         .then((result) => {
@@ -150,7 +152,7 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
                                 await uploadImage(image)
                                     .then(async (imageID) => {
                                         id = imageID
-                                        await new Food().updateFoodImage(foodid, id, foodimagedescription[index])
+                                        await new Food().updateFoodImage(foodid, id, foodname)
                                     })
                             })
                             return res.status(200).json({
@@ -162,7 +164,7 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
                             await uploadImage(req.files.foodimage)
                                 .then(async (imageID) => {
                                     id = imageID
-                                    await new Food().updateFoodImage(foodid, id, foodimagedescription)
+                                    await new Food().updateFoodImage(foodid, id, foodname)
                                 })
                             return res.status(200).json({
                                 success: true,
@@ -203,7 +205,7 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
 })
 
 router.post('/food-add', verifyAdmin, async (req, res) => {
-    const { foodname, foodtype, foodpriceration, fooddescription, foodimagedescription } = req.body
+    const { foodname, foodtype, foodpriceration, fooddescription } = req.body
     let foodid
     if (!checkFoodImage(req.files.foodimage)) {
         return res.status(400).json({
@@ -212,89 +214,85 @@ router.post('/food-add', verifyAdmin, async (req, res) => {
         });
     }
     else if (checkText(foodname)) {
-        if (checkText(fooddescription)) {
-            try {
-                await new Food().addFood(foodtype.split('LMA')[1], foodname, fooddescription)
-                    .then((result) => {
-                        foodid = result[0][0]['@FoodId']
-                    })
-            } catch (err) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Tên món đã trùng'
-                });
-            }
-            if (Array.isArray(foodpriceration)) {
-                foodpriceration.forEach(async e => {
-                    let foodpriceration = JSON.parse(e)
-                    try {
-                        await new Food().updateFoodDetail(foodid, foodpriceration.price, foodpriceration.ration)
-                    }
-                    catch (err) {
-                        return res.status(400).json({
-                            success: false,
-                            message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
-                        });
-                    }
+        try {
+            await new Food().addFood(foodtype.split('LMA')[1], foodname, fooddescription)
+                .then((result) => {
+                    foodid = result[0][0]['@FoodId']
                 })
-            } else if (foodpriceration) {
-                let foodpriceratione = JSON.parse(foodpriceration)
+        } catch (err) {
+            return res.status(400).json({
+                success: false,
+                message: 'Tên món đã trùng'
+            });
+        }
+        if (Array.isArray(foodpriceration)) {
+            foodpriceration.forEach(async e => {
+                let foodpriceration = JSON.parse(e)
                 try {
-                    await new Food().updateFoodDetail(foodid, foodpriceratione.price, foodpriceratione.ration)
+                    await new Food().updateFoodDetail(foodid, foodpriceration.price, foodpriceration.ration)
                 }
                 catch (err) {
+                    console.log(err)
                     return res.status(400).json({
                         success: false,
                         message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
                     });
                 }
-            }
-            //thêm hình ảnh món
+            })
+        } else if (foodpriceration) {
+            let foodpriceratione = JSON.parse(foodpriceration)
             try {
-                if (Array.isArray(req.files.foodimage)) {
-                    req.files.foodimage.forEach(async (image, index) => {
-                        let id
-                        await uploadImage(image)
-                            .then(async (imageID) => {
-                                id = imageID
-                                await new Food().updateFoodImage(foodid, id, foodimagedescription[index])
-                            })
-                    })
-                    return res.status(200).json({
-                        success: true,
-                        message: 'Tạo món ăn thành công, vui lòng đợi giây lát khi ảnh đang được tải lên'
-                    });
-                } else if (req.files.foodimage) {
-                    let id
-                    await uploadImage(req.files.foodimage)
-                        .then(async (imageID) => {
-                            id = imageID
-                            await new Food().updateFoodImage(foodid, id, foodimagedescription)
-                        })
-                    return res.status(200).json({
-                        success: true,
-                        message: 'Tạo món ăn thành công, vui lòng đợi giây lát khi ảnh đang được tải lên'
-                    });
-                }
-                else {
-                    return res.status(200).json({
-                        success: true,
-                        message: 'Thiếu hình ảnh món ăn'
-                    });
-                }
-            } catch (err) {
+                await new Food().updateFoodDetail(foodid, foodpriceratione.price, foodpriceratione.ration)
+            }
+            catch (err) {
                 console.log(err)
                 return res.status(400).json({
                     success: false,
-                    message: 'Có lỗi xảy ra khi tải lên hình ảnh món ăn'
+                    message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
                 });
             }
-        } else {
+        }
+        //thêm hình ảnh món
+        try {
+            if (Array.isArray(req.files.foodimage)) {
+                req.files.foodimage.forEach(async (image, index) => {
+                    let id
+                    await uploadImage(image)
+                        .then(async (imageID) => {
+                            id = imageID
+                            await new Food().updateFoodImage(foodid, id, foodname)
+                        })
+                })
+                return res.status(200).json({
+                    success: true,
+                    message: 'Tạo món ăn thành công, vui lòng đợi giây lát khi ảnh đang được tải lên'
+                });
+            } else if (req.files.foodimage) {
+                let id
+                await uploadImage(req.files.foodimage)
+                    .then(async (imageID) => {
+                        id = imageID
+                        await new Food().updateFoodImage(foodid, id, foodname)
+                    })
+                return res.status(200).json({
+                    success: true,
+                    message: 'Tạo món ăn thành công, vui lòng đợi giây lát khi ảnh đang được tải lên'
+                });
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    message: 'Thiếu hình ảnh món ăn'
+                });
+            }
+        } catch (err) {
+            console.log(err)
             return res.status(400).json({
                 success: false,
-                message: 'Mô tả của món ăn không hợp lệ'
+                message: 'Có lỗi xảy ra khi tải lên hình ảnh món ăn'
             });
         }
+
     } else {
         return res.status(400).json({
             success: false,
@@ -313,12 +311,22 @@ router.delete('/food-delete', verifyAdmin, async (req, res) => {
         })
     if (isExistFood) {
         await new Food().deleteAllFoodDetail(foodid)
-        await new Food().deleteAllFoodImage(foodid)
-        await new Food().deleteFood(foodid)
-        return res.status(200).json({
-            success: false,
-            message: 'Xóa món ăn thành công'
-        });
+            .then(async (result) => {
+                await new Food().deleteAllFoodImage(foodid)
+                await new Food().deleteAllFoodComment(foodid)
+                await new Food().deleteFood(foodid)
+                return res.status(200).json({
+                    success: true,
+                    message: 'Xóa món ăn thành công'
+                });
+            })
+            .catch((err)=>{
+                return res.status(400).json({
+                    success: false,
+                    message: 'Món ăn đang tồn tại trong đơn hàng, không thể xóa'
+                });
+            })
+
     } else
         return res.status(400).json({
             success: false,

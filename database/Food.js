@@ -851,16 +851,7 @@ class Food {
         })
     }
 
-    async deleteAllFoodDetail(FoodId) {
-        return new Promise((resolve, reject) => {
-            let sql = `delete from chi_tiet_mon_an  where MA_MAMON = ?`;
-            dbConnect.query(sql, [FoodId], (err, result) => {
-                if (err)
-                    return reject(err)
-                resolve(true)
-            })
-        })
-    }
+
 
     async updateFoodDetail(FoodId, FoodPrice, FoodRation) {
         return new Promise((resolve, reject) => {
@@ -884,9 +875,31 @@ class Food {
         })
     }
 
+    async deleteAllFoodDetail(FoodId) {
+        return new Promise((resolve, reject) => {
+            let sql = `delete from chi_tiet_mon_an  where MA_MAMON = ?`;
+            dbConnect.query(sql, [FoodId], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(true)
+            })
+        })
+    }
+
     async deleteAllFoodImage(FoodId) {
         return new Promise((resolve, reject) => {
             let sql = `DELETE FROM anh_mon_an WHERE MA_MAMON = ?`;
+            dbConnect.query(sql, [FoodId], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(true)
+            })
+        })
+    }
+
+    async deleteAllFoodComment(FoodId){
+        return new Promise((resolve, reject) => {
+            let sql = `call XOA_BINH_LUAN_CUA_MON_AN(?)`;
             dbConnect.query(sql, [FoodId], (err, result) => {
                 if (err)
                     return reject(err)
@@ -926,6 +939,10 @@ class Food {
                 resolve(true)
             })
         })
+    }
+
+    checkIfFoodIsInAnyOrder(FoodId){
+
     }
 }
 
