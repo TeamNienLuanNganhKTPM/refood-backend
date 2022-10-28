@@ -135,7 +135,7 @@ class Order {
                         result[0]['DDM_NOTE'],
                         result[0]['DDM_TONGTIEN'],
                         getOrderPaymentMethod(result[0]['DDM_PTTT']),
-                        result[0]['DDM_TRANGTHAI']
+                        orderStatus.indexOf(result[0]['DDM_TRANGTHAI'])
                     ))
                 } else
                     resolve(false)
