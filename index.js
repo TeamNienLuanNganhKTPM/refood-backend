@@ -10,6 +10,7 @@ const food = require('./route/food');
 const cart = require('./route/cart');
 const order = require('./route/order');
 const party = require('./route/party');
+const invoice = require('./route/invoice')
 const adminAuth = require('./route/admin.auth');
 const adminManagementUser = require('./route/admin.management.user');
 const adminManagementFood = require('./route/admin.management.food');
@@ -45,4 +46,5 @@ app.use('/food', food);
 app.use('/cart', cart);
 app.use('/order', order);
 app.use('/party', party);
+app.use('/invoice', invoice);
 app.use('/cantho-units', canthounit);

@@ -6,7 +6,7 @@ const orderStatus = [
 ]
 
 const getOrderPaymentMethod = (paymentmethod) => {
-    return paymentmethod == 'cod' ? 'COD' : paymentmethod == 'vnpay' ? 'VNPay' : 'Đã thanh toán qua VNPay'
+    return paymentmethod == 'Tiền mặt' ? 'Tiền mặt' : paymentmethod == 'cod' ? 'COD' : paymentmethod == 'vnpay' ? 'VNPay' : 'Đã thanh toán qua VNPay'
 }
 
 module.exports = {

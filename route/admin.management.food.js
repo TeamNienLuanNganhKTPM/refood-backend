@@ -205,7 +205,10 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
 })
 
 router.post('/food-add', verifyAdmin, async (req, res) => {
-    const { foodname, foodtype, foodpriceration, fooddescription } = req.body
+    let { foodname, foodtype, foodpriceration, fooddescription } = req.body
+    if(!Array.isArray(foodpriceration)){
+        foodpriceration = JSON.parse(foodpriceration)
+    }
     let foodid
     if (!checkFoodImage(req.files.foodimage)) {
         return res.status(400).json({
@@ -225,11 +228,10 @@ router.post('/food-add', verifyAdmin, async (req, res) => {
                 message: 'Tên món đã trùng'
             });
         }
-        if (Array.isArray(foodpriceration)) {
+        // if (Array.isArray(foodpriceration)) {
             foodpriceration.forEach(async e => {
-                let foodpriceration = JSON.parse(e)
                 try {
-                    await new Food().updateFoodDetail(foodid, foodpriceration.price, foodpriceration.ration)
+                    await new Food().updateFoodDetail(foodid, e.price, e.ration)
                 }
                 catch (err) {
                     console.log(err)
@@ -239,19 +241,19 @@ router.post('/food-add', verifyAdmin, async (req, res) => {
                     });
                 }
             })
-        } else if (foodpriceration) {
-            let foodpriceratione = JSON.parse(foodpriceration)
-            try {
-                await new Food().updateFoodDetail(foodid, foodpriceratione.price, foodpriceratione.ration)
-            }
-            catch (err) {
-                console.log(err)
-                return res.status(400).json({
-                    success: false,
-                    message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
-                });
-            }
-        }
+        // } else if (foodpriceration) {
+        //     let foodpriceratione = JSON.parse(foodpriceration)
+        //     try {
+        //         await new Food().updateFoodDetail(foodid, foodpriceratione.price, foodpriceratione.ration)
+        //     }
+        //     catch (err) {
+        //         console.log(err)
+        //         return res.status(400).json({
+        //             success: false,
+        //             message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
+        //         });
+        //     }
+        // }
         //thêm hình ảnh món
         try {
             if (Array.isArray(req.files.foodimage)) {

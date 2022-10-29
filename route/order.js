@@ -205,7 +205,6 @@ router.delete('/cancel-food-order/:orderid', verifyToken, async (req, res) => {
 
 })
 
-
 router.get('/pay-for-food-order/:orderid', verifyToken, async (req, res) => {
     const orderid = req.params.orderid
     const decoded = jwt.verify(req.header('Authorization'), process.env.ACCESS_TOKEN_SECRET)
@@ -388,4 +387,5 @@ router.get('/order-payment-result', async (req, res) => {
             message: 'Thanh toán không thành công, Quý Khách vui lòng thanh toán lại đơn hàng'
         })
 })
+
 module.exports = router

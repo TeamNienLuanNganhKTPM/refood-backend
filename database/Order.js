@@ -105,7 +105,7 @@ class Order {
                 JOIN loai_mon_an lma on ma.LMA_MALOAI = lma.LMA_MALOAI
                 JOIN anh_mon_an ama on ma.MA_MAMON = ama.MA_MAMON 
                 WHERE ddm.DDM_MADON = ? 
-                GROUP BY ma.MA_MAMON`;
+                GROUP BY ctma.CTMA_MACT`;
             dbConnect.query(sql, [OrderID], (err, result) => {
                 if (err) {
                     return reject(err)
