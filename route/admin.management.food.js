@@ -228,32 +228,29 @@ router.post('/food-add', verifyAdmin, async (req, res) => {
                 message: 'Tên món đã trùng'
             });
         }
-        // if (Array.isArray(foodpriceration)) {
+        if (Array.isArray(foodpriceration)) {
             foodpriceration.forEach(async e => {
                 try {
                     await new Food().updateFoodDetail(foodid, e.price, e.ration)
                 }
                 catch (err) {
-                    console.log(err)
                     return res.status(400).json({
                         success: false,
                         message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
                     });
                 }
             })
-        // } else if (foodpriceration) {
-        //     let foodpriceratione = JSON.parse(foodpriceration)
-        //     try {
-        //         await new Food().updateFoodDetail(foodid, foodpriceratione.price, foodpriceratione.ration)
-        //     }
-        //     catch (err) {
-        //         console.log(err)
-        //         return res.status(400).json({
-        //             success: false,
-        //             message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
-        //         });
-        //     }
-        // }
+        } else if (foodpriceration) {
+            try {
+                await new Food().updateFoodDetail(foodid, foodpriceration.price, foodpriceration.ration)
+            }
+            catch (err) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
+                });
+            }
+        }
         //thêm hình ảnh món
         try {
             if (Array.isArray(req.files.foodimage)) {
