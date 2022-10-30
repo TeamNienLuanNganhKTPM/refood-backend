@@ -83,7 +83,7 @@ router.get('/food-detail/:foodKey', verifyAdmin, async (req, res) => {
 
 router.put('/food-edit', verifyAdmin, async (req, res) => {
     //https://drive.google.com/uc?id=
-    const { foodid, foodname, foodtype, foodpriceration, fooddescription, foodimagedeleted, fooddetaildeleted } = req.body
+    const { foodid, foodname, foodtype, foodpriceration, fooddescription, foodimagedeleted, foodpricerationdeleted } = req.body
     let isExistFood
     await new Food().checkIfFoodIsExits(foodid)
         .then((result) => {
@@ -209,6 +209,7 @@ router.post('/food-add', verifyAdmin, async (req, res) => {
     if(!Array.isArray(foodpriceration)){
         foodpriceration = JSON.parse(foodpriceration)
     }
+    // console.log(req.files.foodimage)
     let foodid
     if (!checkFoodImage(req.files.foodimage)) {
         return res.status(400).json({
@@ -225,7 +226,7 @@ router.post('/food-add', verifyAdmin, async (req, res) => {
         } catch (err) {
             return res.status(400).json({
                 success: false,
-                message: 'Tên món đã trùng'
+                message: 'Tên món đã trùng hoặc loại món không phù hợp'
             });
         }
         if (Array.isArray(foodpriceration)) {
