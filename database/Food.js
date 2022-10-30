@@ -20,7 +20,8 @@ class Food {
                             JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
                             JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
                             LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON
-                            GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL`;
+                            GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL
+                            order by ma.count desc`;
             dbConnect.query(sql, [], (err, result) => {
                 if (err) {
                     return reject(err)
