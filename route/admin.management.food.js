@@ -206,9 +206,9 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
 
 router.post('/food-add', verifyAdmin, async (req, res) => {
     let { foodname, foodtype, foodpriceration, fooddescription } = req.body
-    if(!Array.isArray(foodpriceration)){
-        foodpriceration = JSON.parse(foodpriceration)
-    }
+    // if(!Array.isArray(foodpriceration)){
+        // foodpriceration = JSON.parse(foodpriceration)
+    // }
     // console.log(req.files.foodimage)
     let foodid
     if (!checkFoodImage(req.files.foodimage)) {
