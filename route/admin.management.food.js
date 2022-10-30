@@ -206,33 +206,51 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
 
 router.post('/food-add', verifyAdmin, async (req, res) => {
     let { foodname, foodtype, foodpriceration, fooddescription } = req.body
-    // if(!Array.isArray(foodpriceration)){
-        // foodpriceration = JSON.parse(foodpriceration)
-    // }
-    // console.log(req.files.foodimage)
-    let foodid
-    if (!checkFoodImage(req.files.foodimage)) {
-        return res.status(400).json({
-            success: false,
-            message: 'Ảnh món ăn không phù hợp, chỉ hỗ trợ định dạng png, jpeg, jpg'
-        });
+    if (!Array.isArray(foodpriceration)) {
+        let tempFoodPriceRation = foodpriceration
+        foodpriceration = []
+        foodpriceration.push(tempFoodPriceRation)
     }
-    else if (checkText(foodname)) {
-        try {
-            await new Food().addFood(foodtype.split('LMA')[1], foodname, fooddescription)
-                .then((result) => {
-                    foodid = result[0][0]['@FoodId']
-                })
-        } catch (err) {
+    if (foodpriceration.length > 0 && Array.isArray(foodpriceration)) {
+        let foodid
+        if (req.files == null) {
             return res.status(400).json({
                 success: false,
-                message: 'Tên món đã trùng hoặc loại món không phù hợp'
+                message: 'Chưa chọn ảnh món ăn'
             });
-        }
-        if (Array.isArray(foodpriceration)) {
-            foodpriceration.forEach(async e => {
+        } else if (!checkFoodImage(req.files.foodimage))
+            return res.status(400).json({
+                success: false,
+                message: 'Ảnh món ăn không phù hợp, chỉ hỗ trợ định dạng png, jpeg, jpg'
+            });
+        else if (checkText(foodname)) {
+            try {
+                await new Food().addFood(foodtype.split('LMA')[1], foodname, fooddescription)
+                    .then((result) => {
+                        foodid = result[0][0]['@FoodId']
+                    })
+            } catch (err) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Tên món đã trùng hoặc loại món không phù hợp'
+                });
+            }
+            if (Array.isArray(foodpriceration)) {
+                foodpriceration.forEach(async e => {
+                    let tempFoodpriceration = JSON.parse(e)
+                    try {
+                        await new Food().updateFoodDetail(foodid, tempFoodpriceration.price, tempFoodpriceration.ration)
+                    }
+                    catch (err) {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
+                        });
+                    }
+                })
+            } else if (foodpriceration) {
                 try {
-                    await new Food().updateFoodDetail(foodid, e.price, e.ration)
+                    await new Food().updateFoodDetail(foodid, foodpriceration.price, foodpriceration.ration)
                 }
                 catch (err) {
                     return res.status(400).json({
@@ -240,66 +258,60 @@ router.post('/food-add', verifyAdmin, async (req, res) => {
                         message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
                     });
                 }
-            })
-        } else if (foodpriceration) {
+            }
+            //thêm hình ảnh món
             try {
-                await new Food().updateFoodDetail(foodid, foodpriceration.price, foodpriceration.ration)
-            }
-            catch (err) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Có lỗi xảy ra khi thêm chi tiết khẩu phần món ăn'
-                });
-            }
-        }
-        //thêm hình ảnh món
-        try {
-            if (Array.isArray(req.files.foodimage)) {
-                req.files.foodimage.forEach(async (image, index) => {
+                if (Array.isArray(req.files.foodimage)) {
+                    req.files.foodimage.forEach(async (image, index) => {
+                        let id
+                        await uploadImage(image)
+                            .then(async (imageID) => {
+                                id = imageID
+                                await new Food().updateFoodImage(foodid, id, foodname)
+                            })
+                    })
+                    return res.status(200).json({
+                        success: true,
+                        message: 'Tạo món ăn thành công, vui lòng đợi giây lát khi ảnh đang được tải lên'
+                    });
+                } else if (req.files.foodimage) {
                     let id
-                    await uploadImage(image)
+                    await uploadImage(req.files.foodimage)
                         .then(async (imageID) => {
                             id = imageID
                             await new Food().updateFoodImage(foodid, id, foodname)
                         })
-                })
-                return res.status(200).json({
-                    success: true,
-                    message: 'Tạo món ăn thành công, vui lòng đợi giây lát khi ảnh đang được tải lên'
-                });
-            } else if (req.files.foodimage) {
-                let id
-                await uploadImage(req.files.foodimage)
-                    .then(async (imageID) => {
-                        id = imageID
-                        await new Food().updateFoodImage(foodid, id, foodname)
-                    })
-                return res.status(200).json({
-                    success: true,
-                    message: 'Tạo món ăn thành công, vui lòng đợi giây lát khi ảnh đang được tải lên'
-                });
-            }
-            else {
-                return res.status(200).json({
-                    success: true,
-                    message: 'Thiếu hình ảnh món ăn'
+                    return res.status(200).json({
+                        success: true,
+                        message: 'Tạo món ăn thành công, vui lòng đợi giây lát khi ảnh đang được tải lên'
+                    });
+                }
+                else {
+                    return res.status(200).json({
+                        success: true,
+                        message: 'Thiếu hình ảnh món ăn'
+                    });
+                }
+            } catch (err) {
+                console.log(err)
+                return res.status(400).json({
+                    success: false,
+                    message: 'Có lỗi xảy ra khi tải lên hình ảnh món ăn'
                 });
             }
-        } catch (err) {
-            console.log(err)
+
+        } else {
             return res.status(400).json({
                 success: false,
-                message: 'Có lỗi xảy ra khi tải lên hình ảnh món ăn'
+                message: 'Tên món ăn không hợp lệ'
             });
         }
-
     } else {
         return res.status(400).json({
             success: false,
-            message: 'Tên món ăn không hợp lệ'
+            message: 'Chưa có chi tiết giá và khẩu phần món ăn'
         });
     }
-
 })
 
 router.delete('/food-delete', verifyAdmin, async (req, res) => {
@@ -320,7 +332,7 @@ router.delete('/food-delete', verifyAdmin, async (req, res) => {
                     message: 'Xóa món ăn thành công'
                 });
             })
-            .catch((err)=>{
+            .catch((err) => {
                 return res.status(400).json({
                     success: false,
                     message: 'Món ăn đang tồn tại trong đơn hàng, không thể xóa'
