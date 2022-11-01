@@ -1,3 +1,4 @@
+const { resolve } = require('path');
 const dbConnect = require('./dbconnect');
 
 class Food {
@@ -852,11 +853,9 @@ class Food {
         })
     }
 
-
-
     async updateFoodDetail(FoodId, FoodPrice, FoodRation) {
         return new Promise((resolve, reject) => {
-            let sql = `call THEM_CHI_TIET_MON_AN(?,?,?)`;
+            let sql = `call CAP_NHAT_CHI_TIET_MON_AN(?,?,?)`;
             dbConnect.query(sql, [FoodId, FoodPrice, FoodRation], (err, result) => {
                 if (err)
                     return reject(err)
@@ -898,7 +897,7 @@ class Food {
         })
     }
 
-    async deleteAllFoodComment(FoodId){
+    async deleteAllFoodComment(FoodId) {
         return new Promise((resolve, reject) => {
             let sql = `call XOA_BINH_LUAN_CUA_MON_AN(?)`;
             dbConnect.query(sql, [FoodId], (err, result) => {
@@ -942,7 +941,38 @@ class Food {
         })
     }
 
-    checkIfFoodIsInAnyOrder(FoodId){
+    async checkIfFoodDetailIsInAnyOrder(FoodDetailId) {
+        return new Promise((resolve, reject) => {
+            let sql = `select ((SELECT count(*) FROM chi_tiet_don_dat_mon WHERE CTMA_MACT = ?) + (SELECT count(*) FROM chi_tiet_don_dat_tiec WHERE CTMA_MACT = ?)) > 0 SOSANH`
+            dbConnect.query(sql, [FoodDetailId, FoodDetailId], (err, result) => {
+                if (err)
+                    reject(err)
+                resolve(result[0].SOSANH)
+            })
+        })
+    }
+
+    async checkIfDeleteAllImage(FoodID, ImageIDArray) {
+        return new Promise((resolve, reject) => {
+            // let sql = `SELECT (SELECT count(*) FROM anh_mon_an WHERE MA_MAMON = 'MA36' AND AMA_URL in ('1X4lIa745VVGowc1xCjAodP09gzs75mZi', '1KAK3pm0-e8dkRjigqye5IpB5AsrdY4l8'))  >= (select count(*) from anh_mon_an where MA_MAMON = 'MA36') `
+            let sql = `SELECT (select count(*) from anh_mon_an where MA_MAMON = ?) <= ? SOSANH`
+            dbConnect.query(sql, [FoodID, ImageIDArray.length], (err, result) => {
+                if (err)
+                    reject(err)
+                resolve(result[0].SOSANH)
+            })
+        })
+    }
+
+    async checkIfDeleteAllDetail(FoodID, DetailArray) {
+        return new Promise((resolve, reject) => {
+            let sql = `SELECT (select count(*) from chi_tiet_mon_an where MA_MAMON = ?) <= ? SOSANH`
+            dbConnect.query(sql, [FoodID, DetailArray.length], (err, result) => {
+                if (err)
+                    reject(err)
+                resolve(result[0].SOSANH)
+            })
+        })
 
     }
 }
