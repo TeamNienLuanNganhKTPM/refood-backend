@@ -875,9 +875,19 @@ class Food {
         })
     }
 
-    async deleteAllFoodDetail(FoodId) {
+    async deleteAllFoodDetail(FoodDetailId) {
         return new Promise((resolve, reject) => {
-            let sql = `delete from chi_tiet_mon_an  where MA_MAMON = ?`;
+            let sql = `delete from chi_tiet_mon_an where CTMA_MACT = ?`;
+            dbConnect.query(sql, [FoodDetailId], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(true)
+            })
+        })
+    }
+    async deleteAllFoodDetailOfFood(FoodId) {
+        return new Promise((resolve, reject) => {
+            let sql = `delete from chi_tiet_mon_an where MA_MAMON = ?`;
             dbConnect.query(sql, [FoodId], (err, result) => {
                 if (err)
                     return reject(err)
@@ -900,6 +910,17 @@ class Food {
     async deleteAllFoodComment(FoodId) {
         return new Promise((resolve, reject) => {
             let sql = `call XOA_BINH_LUAN_CUA_MON_AN(?)`;
+            dbConnect.query(sql, [FoodId], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(true)
+            })
+        })
+    }
+
+    async deleteAllFoodReview(FoodId) {
+        return new Promise((resolve, reject) => {
+            let sql = `DELETE FROM danh_gia WHERE MA_MAMON = ?`;
             dbConnect.query(sql, [FoodId], (err, result) => {
                 if (err)
                     return reject(err)
@@ -945,6 +966,23 @@ class Food {
         return new Promise((resolve, reject) => {
             let sql = `select ((SELECT count(*) FROM chi_tiet_don_dat_mon WHERE CTMA_MACT = ?) + (SELECT count(*) FROM chi_tiet_don_dat_tiec WHERE CTMA_MACT = ?)) > 0 SOSANH`
             dbConnect.query(sql, [FoodDetailId, FoodDetailId], (err, result) => {
+                if (err)
+                    reject(err)
+                resolve(result[0].SOSANH)
+            })
+        })
+    }
+
+    async checkIfFoodIsInAnyOrder(FoodId) {
+        return new Promise((resolve, reject) => {
+            let sql = `select (
+                    (SELECT count(*) FROM chi_tiet_don_dat_mon ctddm join chi_tiet_mon_an ctma on ctma.CTMA_MACT = ctddm.CTMA_MACT WHERE ctma.MA_MAMON = ?)
+                 + 
+                    (SELECT count(*) FROM chi_tiet_don_dat_tiec ctddt join chi_tiet_mon_an ctma on ctma.CTMA_MACT = ctddt.CTMA_MACT WHERE ctma.MA_MAMON = ?)
+                 +
+                    (SELECT count(*) FROM chi_tiet_gio_mon_an ctgma join chi_tiet_mon_an ctma on ctma.CTMA_MACT = ctgma.CTMA_MACT WHERE ctma.MA_MAMON = ?)
+                    ) > 0 SOSANH`
+            dbConnect.query(sql, [FoodId, FoodId, FoodId], (err, result) => {
                 if (err)
                     reject(err)
                 resolve(result[0].SOSANH)
