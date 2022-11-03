@@ -7,7 +7,8 @@ const Comment = require('../database/Comment')
 const Cart = require('../database/Cart')
 const verifyToken = require('../authentication/auth')
 const intersectMany = require('../function/arrayFunction')
-const { checkText } = require('../function/Inspect')
+const { checkText, checkRateScore } = require('../function/Inspect');
+const Rating = require('../database/Rating');
 router.get('/get-foodtypes', async (req, res) => {
     await new FoodType()
         .getAll()
@@ -563,4 +564,78 @@ router.delete('/delete-comment', verifyToken, async (req, res) => {
     }
 })
 
+router.post('/add-review', verifyToken, async (req, res) => {
+    const { foodid, ratescore } = req.body
+    const authHeader = req.header('Authorization')
+    const token = authHeader
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const customerid = req.header('CustomerId')
+    if (customerid == decoded.CustomerId)
+        if (!checkRateScore(ratescore))
+            return res.status(400).json({ success: false, message: 'Điểm đánh giá không hợp lệ!' })
+        else {
+            await new Rating().checkIfCanRate(customerid, foodid)
+                .then(async (result) => {
+                    if (!result) {
+                        await new Rating().isRated(customerid, foodid)
+                            .then(async (result) => {
+                                if (!result) {
+                                    await new Rating().create(customerid, foodid, ratescore)
+                                        .then((result) => {
+                                            return res.status(200).json({
+                                                success: true,
+                                                message: 'Quý khách đã đánh giá món ăn thành công'
+                                            });
+                                        })
+                                        .catch((err) => {
+                                            return res.status(400).json({
+                                                success: false,
+                                                message: 'Quý khách vui lòng thử lại sau'
+                                            });
+                                        })
+                                } else {
+                                    return res.status(400).json({
+                                        success: false,
+                                        message: 'Quý khách đã đánh giá món ăn này, không thể đánh giá lại'
+                                    });
+                                }
+                            })
+                    } else {
+                        return res.status(400).json({
+                            success: false,
+                            message: 'Quý khách chưa từng đặt qua món ăn này, nên chưa thể đánh giá'
+                        });
+                    }
+                })
+        }
+    else
+        return res.status(400).json({
+            success: false,
+            message: 'Token không hợp lệ'
+        });
+})
+
+router.get('/get-reviews/:foodid', async (req, res) => {
+    const foodid = req.params.foodid
+    if (foodid != null)
+        await new Rating().getReviewOfFood(foodid)
+            .then((reviews) => {
+                return res.status(200).json({
+                    success: true,
+                    reviews,
+                });
+            })
+            .catch((err) => setImmediate(() => {
+                console.log(err)
+                return res.status(400).json({
+                    success: false,
+                    message: 'Quý khách vui lòng thử lại sau'
+                });
+            }))
+    else
+        return res.status(400).json({
+            success: false,
+            message: 'Không có mã món ăn để tìm'
+        });
+})
 module.exports = router

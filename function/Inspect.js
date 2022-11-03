@@ -41,6 +41,12 @@ const checkFoodImage = (foodimage) => {
     }
     return isImage
 }
+
+const checkRateScore = (number) => {
+    if (number.match(/^([1-5]$)/g) != null)
+        return true
+    return false
+}
 module.exports = {
     checkFoodImage,
     checkDateTime,
@@ -48,5 +54,6 @@ module.exports = {
     checkText,
     checkMail,
     checkPhoneNumber,
-    checkPaymentMethod
+    checkPaymentMethod,
+    checkRateScore
 }
