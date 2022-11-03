@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken')
 const verifyAdmin = require('../authentication/auth')
 const Order = require('../database/Order')
-const { orderStatus } = require('../function/orderStatus')
+const { orderStatus, getOrderPaymentMethod } = require('../function/orderStatus')
 router.get('/get-food-orders/:pageCur/:numOnPage', verifyAdmin, async (req, res) => {
     await new Order().getAllForAdmin()
         .then((orders) => {
@@ -80,30 +80,39 @@ router.put('/update-food-order', verifyAdmin, async (req, res) => {
         })
 })
 
-router.put('/paid-cod-order', verifyAdmin, async (req, res) => {
+router.put('/cancel-order', verifyAdmin, async (req, res) => {
     const { orderid } = req.body
+    let pttt = false;
+    await new Order().getOrderPaymentStatus(orderid)
+        .then((result) => pttt = result)
     await new Order().getOrderStatus(orderid)
         .then(async (result) => {
             if (result != false && result != orderStatus[2]) {
                 let indexOrderStatus = orderStatus.indexOf(result);
-                indexOrderStatus++;
-                await new Order().updateForAdmin(orderid, orderStatus[indexOrderStatus])
-                    .then((result) => {
-                        return res.status(400).json({
-                            success: false,
-                            message: 'Đã cập nhật trạng thái đơn hàng'
-                        })
+                if (indexOrderStatus != 1 && getOrderPaymentMethod(pttt) == 'Đã thanh toán qua VNPay')
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Đơn này không thể hủy',
                     })
-                    .catch((err) => {
-                        return res.status(400).json({
-                            success: false,
-                            message: 'Vui lòng thử lại sau'
+                else {
+                    await new Order().updateForAdmin(orderid, orderStatus[3])
+                        .then((result) => {
+                            return res.status(200).json({
+                                success: true,
+                                message: 'Đã hủy đơn hàng'
+                            })
                         })
-                    })
+                        .catch((err) => {
+                            return res.status(400).json({
+                                success: false,
+                                message: 'Vui lòng thử lại sau'
+                            })
+                        })
+                }
             } else {
                 return res.status(400).json({
                     success: false,
-                    message: 'Đơn này không thể cập nhật'
+                    message: 'Đơn này không thể hủy'
                 })
             }
         })
@@ -114,6 +123,7 @@ router.put('/paid-cod-order', verifyAdmin, async (req, res) => {
             })
         })
 })
+
 module.exports = router
 
 
