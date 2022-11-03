@@ -576,7 +576,7 @@ router.post('/add-review', verifyToken, async (req, res) => {
         else {
             await new Rating().checkIfCanRate(customerid, foodid)
                 .then(async (result) => {
-                    if (!result) {
+                    if (result) {
                         await new Rating().isRated(customerid, foodid)
                             .then(async (result) => {
                                 if (!result) {
