@@ -89,7 +89,7 @@ router.put('/cancel-order', verifyAdmin, async (req, res) => {
         .then(async (result) => {
             if (result != false && result != orderStatus[2]) {
                 let indexOrderStatus = orderStatus.indexOf(result);
-                if (indexOrderStatus != 1 && getOrderPaymentMethod(pttt) == 'Đã thanh toán qua VNPay')
+                if (indexOrderStatus != 1)// && getOrderPaymentMethod(pttt) == 'Đã thanh toán qua VNPay')
                     return res.status(400).json({
                         success: false,
                         message: 'Đơn này không thể hủy',
