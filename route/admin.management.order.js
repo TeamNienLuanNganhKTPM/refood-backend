@@ -54,8 +54,8 @@ router.put('/update-food-order', verifyAdmin, async (req, res) => {
                 indexOrderStatus++;
                 await new Order().updateForAdmin(orderid, orderStatus[indexOrderStatus])
                     .then((result) => {
-                        return res.status(400).json({
-                            success: false,
+                        return res.status(200).json({
+                            success: true,
                             message: 'Đã cập nhật trạng thái đơn hàng'
                         })
                     })
