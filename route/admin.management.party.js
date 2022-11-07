@@ -2,11 +2,11 @@ const express = require('express')
 const router = express.Router();
 const jwt = require('jsonwebtoken')
 const verifyAdmin = require('../authentication/auth')
-const Order = require('../database/Order')
+const Party = require('../database/Party')
 const Invoice = require('../database/Invoice')
 const { orderStatus, getOrderPaymentMethod } = require('../function/orderStatus')
-router.get('/get-food-orders/:pageCur/:numOnPage', verifyAdmin, async (req, res) => {
-    await new Order().getAllForAdmin()
+router.get('/get-party-orders/:pageCur/:numOnPage', verifyAdmin, async (req, res) => {
+    await new Party().getAllForAdmin()
         .then((orders) => {
             let numberToGet = parseInt(req.params.numOnPage) //số lượng món ăn trên 1 trang
             let pageNum = Math.ceil(orders.length / numberToGet);
@@ -24,19 +24,19 @@ router.get('/get-food-orders/:pageCur/:numOnPage', verifyAdmin, async (req, res)
                 countOnPage: orderss.length,
                 pageCur,
                 pageNum,
-                orders: orderss,
+                parties: orderss,
             });
         })
 })
 
-router.get('/get-food-order-detail/:orderid', verifyAdmin, async (req, res) => {
-    const orderid = req.params.orderid
-    await new Order().get(orderid)
-        .then((order) => {
-            if (order != false)
+router.get('/get-party-order-detail/:partyid', verifyAdmin, async (req, res) => {
+    const partyid = req.params.partyid
+    await new Party().get(partyid)
+        .then((party) => {
+            if (party != false)
                 return res.status(200).json({
                     success: true,
-                    order_detail: order
+                    party_detail: party
                 })
             else
                 return res.status(400).json({
@@ -46,20 +46,17 @@ router.get('/get-food-order-detail/:orderid', verifyAdmin, async (req, res) => {
         })
 })
 
-router.put('/update-food-order', verifyAdmin, async (req, res) => {
-    const { orderid } = req.body
-    let pttt = false;
-    await new Order().getOrderStatus(orderid)
-        .then((result) => pttt = result)
-    await new Order().getOrderStatus(orderid)
+router.put('/update-party-order', verifyAdmin, async (req, res) => {
+    const { partyid } = req.body
+    await new Party().getPartyStatus(partyid)
         .then(async (result) => {
             if (result != false && result != orderStatus[2]) {
                 let indexOrderStatus = orderStatus.indexOf(result);
                 indexOrderStatus++;
-                await new Order().updateForAdmin(orderid, orderStatus[indexOrderStatus])
+                await new Party().updateForAdmin(partyid, orderStatus[indexOrderStatus])
                     .then(async (result) => {
-                        if (indexOrderStatus == 2 && pttt == 'cod')
-                            await new Invoice().create(orderid)
+                        if (indexOrderStatus == 2)
+                            await new Invoice().create(partyid)
                         return res.status(200).json({
                             success: true,
                             message: 'Đã cập nhật trạng thái đơn hàng'
@@ -87,11 +84,8 @@ router.put('/update-food-order', verifyAdmin, async (req, res) => {
 })
 
 router.put('/cancel-order', verifyAdmin, async (req, res) => {
-    const { orderid } = req.body
-    let pttt = false;
-    await new Order().getOrderPaymentStatus(orderid)
-        .then((result) => pttt = result)
-    await new Order().getOrderStatus(orderid)
+    const { partyid } = req.body
+    await new Party().getPartyStatus(partyid)
         .then(async (result) => {
             if (result != false && result != orderStatus[2]) {
                 let indexOrderStatus = orderStatus.indexOf(result);
@@ -101,7 +95,7 @@ router.put('/cancel-order', verifyAdmin, async (req, res) => {
                         message: 'Đơn này không thể hủy',
                     })
                 else {
-                    await new Order().updateForAdmin(orderid, orderStatus[3])
+                    await new Party().updateForAdmin(partyid, orderStatus[3])
                         .then((result) => {
                             return res.status(200).json({
                                 success: true,

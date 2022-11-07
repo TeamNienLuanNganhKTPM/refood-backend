@@ -231,6 +231,18 @@ class Order {
         })
     }
 
+    async getPaymentMethod(OrderID) {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM don_dat_mon WHERE DDM_MADON = ?`;
+            dbConnect.query(sql, [OrderID], (err, result) => {
+                if (err) {
+                    return reject(err)
+                }
+                resolve((result.length > 0) ? result[0].DDM_PTTT : false)
+            })
+        })
+    }
+
     async getOrderSubTotal(OrderID) {
         return new Promise((resolve, reject) => {
             const sql = `SELECT sum(ctddm.CTD_SOLUONG * ctma.CTMA_MUCGIA) SUBTOTAL FROM chi_tiet_don_dat_mon ctddm JOIN chi_tiet_mon_an ctma WHERE ctddm.CTMA_MACT = ctma.CTMA_MACT AND DDM_MADON = ? `;

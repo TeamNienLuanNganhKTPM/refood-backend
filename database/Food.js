@@ -22,7 +22,7 @@ class Food {
                             JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
                             LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON
                             GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL
-                            order by ma.count desc`;
+                            order by ma.count desc, ctma.CTMA_MUCGIA asc`;
             dbConnect.query(sql, [], (err, result) => {
                 if (err) {
                     return reject(err)
@@ -92,7 +92,7 @@ class Food {
                             JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
                             LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON
                             GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL
-                            order by ma.count desc`;
+                            order by ma.count desc, ctma.CTMA_MUCGIA asc`;
             dbConnect.query(sql, [], (err, result) => {
                 if (err) {
                     return reject(err)
@@ -244,7 +244,7 @@ class Food {
                 JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
                 LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON 
                 GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL
-                order by ma.count DESC`;
+                order by ma.count desc, ctma.CTMA_MUCGIA asc`;
             dbConnect.query(sql, [limit], (err, result) => {
                 if (err) {
                     return reject(err)
@@ -765,7 +765,8 @@ class Food {
                                     LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON 
                                     GROUP BY ma.MA_MAMON, ctma.CTMA_MACT, ama.AMA_URL) 
                                     as temp
-                            WHERE MA_MAMON = ?`;
+                            WHERE MA_MAMON = ?
+                            order by CTMA_MUCGIA asc`;
             dbConnect.query(sql, [FoodId], (err, result) => {
                 if (err) {
                     return reject(err)
