@@ -206,7 +206,7 @@ router.get('/get-foods/:pageCur/:numOnPage', async (req, res) => {
         }))
 })
 
-router.get('/find-foods/:pageCur/:numOnPage', async (req, res) => {
+router.get('/find-foods', async (req, res) => {
     let foods = [];
     let { name, type, prices, ration, review } = req.query
     let foodByName = [];
