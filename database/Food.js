@@ -86,13 +86,14 @@ class Food {
 
     async getForParty() {
         return new Promise((resolve, reject) => {
-            const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
-                            JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
-                            JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
-                            JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
-                            LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON
-                            GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL
-                            order by ma.count desc, ctma.CTMA_MUCGIA asc`;
+            // const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
+            //                 JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
+            //                 JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON 
+            //                 JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON 
+            //                 LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON
+            //                 GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL
+            //                 order by ma.count desc, ctma.CTMA_MUCGIA asc`;
+            const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI JOIN chi_tiet_mon_an ctma ON ma.MA_MAMON=ctma.MA_MAMON JOIN anh_mon_an ama ON ma.MA_MAMON=ama.MA_MAMON LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON WHERE ctma.CTMA_KHAUPHAN =10 GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL order by ma.count desc, ctma.CTMA_MUCGIA asc`;
             dbConnect.query(sql, [], (err, result) => {
                 if (err) {
                     return reject(err)

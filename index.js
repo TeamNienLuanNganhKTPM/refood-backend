@@ -43,6 +43,7 @@ app.use('/admin/management/user', adminManagementUser);
 app.use('/admin/management/food', adminManagementFood);
 app.use('/admin/management/order', adminManagementOrder);
 app.use('/admin/management/party', adminManagementParty);
+app.use('/admin/management/comment', adminManagementComment);
 app.use('/auth', auth);
 app.use('/food', food);
 app.use('/cart', cart);

@@ -206,7 +206,7 @@ router.get('/get-foods/:pageCur/:numOnPage', async (req, res) => {
         }))
 })
 
-router.get('/find-foods', async (req, res) => {
+router.get('/find-foods/:pageCur/:numOnPage', async (req, res) => {
     let foods = [];
     let { name, type, prices, ration, review } = req.query
     let foodByName = [];
@@ -300,7 +300,7 @@ router.get('/find-foods', async (req, res) => {
     })
 })
 
-router.get('/filter-foods', async (req, res) => {
+router.get('/filter-foods/:pageCur/:numOnPage', async (req, res) => {
     let { name, type, prices, ration, review } = req.query
     if (name == undefined && type == undefined && prices == undefined && ration == undefined && review == undefined)
         return res.status(400).json({
@@ -313,9 +313,23 @@ router.get('/filter-foods', async (req, res) => {
         await new Food()
             .filterFoods(name, type, minPrice, maxPrice, ration, review)
             .then((foods) => {
+                let numberToGet = req.params.numOnPage //số lượng món ăn trên 1 trang
+                let pageNum = Math.ceil(foods.length / numberToGet);
+                const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+                let foodss = []
+                let curIndex = (pageCur - 1) * numberToGet
+                let count = 0
+                while (foods[curIndex] != null && count < numberToGet) {
+                    foodss.push(foods[curIndex])
+                    curIndex++
+                    count++
+                }
                 return res.status(200).json({
                     success: true,
-                    foods
+                    countOnPage: foodss.length,
+                    pageCur,
+                    pageNum,
+                    foods: foodss,
                 });
             })
             .catch((err) => setImmediate(() => {
