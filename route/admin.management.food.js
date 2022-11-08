@@ -161,9 +161,9 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
                                 foodpriceration.forEach(async e => {
                                     let foodpriceratione = JSON.parse(e)
                                     console.log(foodpriceratione)
-                                    if (e.id == null)
+                                    if (e.id == null || e.id == 'null')
                                         await new Food().updateFoodDetail(foodid, foodpriceratione.price, foodpriceratione.ration)
-                                    else 
+                                    else
                                         await new Food().updateFoodDetailExisted(foodid, foodpriceratione.id, foodpriceratione.price, foodpriceratione.ration)
                                 })
 
