@@ -159,8 +159,12 @@ router.put('/food-edit', verifyAdmin, async (req, res) => {
                                             })
                                 })
                                 foodpriceration.forEach(async e => {
-                                    let foodpriceration = JSON.parse(e)
-                                    await new Food().updateFoodDetail(foodid, foodpriceration.price, foodpriceration.ration)
+                                    let foodpriceratione = JSON.parse(e)
+                                    console.log(foodpriceratione)
+                                    if (e.id == null)
+                                        await new Food().updateFoodDetail(foodid, foodpriceratione.price, foodpriceratione.ration)
+                                    else 
+                                        await new Food().updateFoodDetailExisted(foodid, foodpriceratione.id, foodpriceratione.price, foodpriceratione.ration)
                                 })
 
                                 //Cập nhật hình ảnh món

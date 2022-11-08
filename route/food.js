@@ -64,14 +64,27 @@ router.get('/get-popular-foods/:limit', async (req, res) => {
         }))
 })
 
-router.get('/get-popular-foods', async (req, res) => {
-    let numberToGet = 5
+router.get('/get-popular-foods/:pageCur/:numOnPage', async (req, res) => {
     await new Food()
-        .getPopularFood(numberToGet)
+        .getPopularFood()
         .then((foods) => {
+            let numberToGet = req.params.numOnPage //số lượng món ăn trên 1 trang
+            let pageNum = Math.ceil(foods.length / numberToGet);
+            const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+            let foodss = []
+            let curIndex = (pageCur - 1) * numberToGet
+            let count = 0
+            while (foods[curIndex] != null && count < numberToGet) {
+                foodss.push(foods[curIndex])
+                curIndex++
+                count++
+            }
             return res.status(200).json({
                 success: true,
-                foods
+                countOnPage: foodss.length,
+                pageCur,
+                pageNum,
+                foods: foodss,
             });
         })
         .catch((err) => setImmediate(() => {
@@ -100,14 +113,27 @@ router.get('/get-new-foods/:limit', async (req, res) => {
         }))
 })
 
-router.get('/get-new-foods', async (req, res) => {
-    let numberToGet = 5
+router.get('/get-new-foods/:pageCur/:numOnPage', async (req, res) => {
     await new Food()
-        .getNewFood(numberToGet)
+        .getNewFood()
         .then((foods) => {
+            let numberToGet = req.params.numOnPage //số lượng món ăn trên 1 trang
+            let pageNum = Math.ceil(foods.length / numberToGet);
+            const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+            let foodss = []
+            let curIndex = (pageCur - 1) * numberToGet
+            let count = 0
+            while (foods[curIndex] != null && count < numberToGet) {
+                foodss.push(foods[curIndex])
+                curIndex++
+                count++
+            }
             return res.status(200).json({
                 success: true,
-                foods
+                countOnPage: foodss.length,
+                pageCur,
+                pageNum,
+                foods: foodss,
             });
         })
         .catch((err) => setImmediate(() => {

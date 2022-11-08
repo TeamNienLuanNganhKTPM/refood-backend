@@ -159,7 +159,7 @@ class Food {
         });
     }
 
-    async getPopularFood(limit) {
+    async getPopularFood() {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
                 JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
@@ -171,11 +171,13 @@ class Food {
                         join (SELECT CTMA_MACT, count(CTMA_MACT) Popular 
                         FROM chi_tiet_don_dat_mon 
                         GROUP BY (CTMA_MACT) 
-                        ORDER BY Popular DESC LIMIT ?) top 
+                        ORDER BY Popular DESC) top 
                         on ctma.CTMA_MACT = top.CTMA_MACT 
                         join mon_an ma on ma.MA_MAMON = ctma.MA_MAMON) 
                 GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL`;
-            dbConnect.query(sql, [limit], (err, result) => {
+//                                        ORDER BY Popular DESC LIMIT ?) top 
+
+            dbConnect.query(sql, [], (err, result) => {
                 if (err) {
                     return reject(err)
                 }
@@ -236,7 +238,7 @@ class Food {
         });
     }
 
-    async getNewFood(limit) {
+    async getNewFood() {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * ,ma.MA_MAMON, toSlug(ma.MA_TENMON) FOOD_SLUG, AVG(DG_DIEMDG) DANH_GIA FROM mon_an ma 
                 JOIN loai_mon_an lma ON ma.LMA_MALOAI = lma.LMA_MALOAI 
@@ -245,7 +247,7 @@ class Food {
                 LEFT JOIN danh_gia dg ON ma.MA_MAMON=dg.MA_MAMON 
                 GROUP BY ma.MA_MAMON, CTMA_MACT, AMA_URL
                 order by ma.count desc, ctma.CTMA_MUCGIA asc`;
-            dbConnect.query(sql, [limit], (err, result) => {
+            dbConnect.query(sql, [], (err, result) => {
                 if (err) {
                     return reject(err)
                 }
@@ -940,6 +942,17 @@ class Food {
         })
     }
 
+    async updateFoodDetailExisted(FoodId, FoodDetailID, FoodPrice, FoodRation){
+        return new Promise((resolve, reject) => {
+            let sql = `call CAP_NHAT_CHI_TIET_MON_AN_MACHITIET(?,?,?,?)`;
+            dbConnect.query(sql, [FoodId, FoodDetailID, FoodPrice, FoodRation], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(true)
+            })
+        })
+    }
+
     async deleteFoodImage(FoodId, FoodImageUrl) {
         return new Promise((resolve, reject) => {
             let sql = `DELETE FROM anh_mon_an WHERE MA_MAMON = ? AND AMA_URL = ?`;
@@ -1089,6 +1102,7 @@ class Food {
         })
 
     }
+
 }
 
 module.exports = Food;
