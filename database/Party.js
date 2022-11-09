@@ -1,5 +1,5 @@
 const dbConnect = require('./dbconnect')
-const {orderStatus} = require('../function/orderStatus')
+const { orderStatus } = require('../function/orderStatus')
 class Party {
     constructor(PartyID, PartyCustomer, PartyType, PartyTimeStart, PartyPlace, PartyNote, PartyAdmin, PartyDate, PartyDetails, PartyNumOfTable, PartySubTotal, PartyState) {
         this.PartyID = PartyID
@@ -104,7 +104,7 @@ class Party {
                     })
                 })
                 resolve(new Party(
-                    result[0]['DDM_MADON'],
+                    result[0]['DDT_MADON'],
                     `${result[0]['KH_TENKH']} - ${result[0]['KH_SDT']}`,
                     result[0]['DDT_LOAITIEC'],
                     result[0]['DDT_NGAYGIODAI'],
@@ -114,8 +114,8 @@ class Party {
                     result[0]['DDT_NGAYGIO'],
                     PartyDetails,
                     result[0]['DDT_SOBANTIEC'],
-                    result[0]['DDM_TONGTIEN'],
-                    result[0]['DDM_TRANGTHAI']
+                    result[0]['DDT_TONGTIEN'],
+                    orderStatus.indexOf(result[0]['DDT_TRANGTHAI'])
                 ))
             })
         })
