@@ -204,7 +204,7 @@ class Party {
                         PartyNumOfTable: e.DDT_SOBANTIEC,
                         PartyNote: e.DDT_NOTE,
                         PartySubTotal: e.DDT_TONGTIEN,
-                        PartyState: orderStatus.indexOf(e.DDM_TRANGTHAI),
+                        PartyState: orderStatus.indexOf(e.DDT_TRANGTHAI),
                     })
                 })
                 resolve(party)
