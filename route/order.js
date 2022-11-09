@@ -347,34 +347,12 @@ router.get('/order-payment-result', async (req, res) => {
                     if (result) {
                         await new Invoice().create(payment.vnp_TxnRef)
                             .then((invoiceid) => {
-                                return res.send(`<script>window.location='https://refoodapp.store/user/order/${payment.vnp_TxnRef}?paid=vnpay'</script>`)
-                                // return res.status(200).json({
-                                //     success: true,
-                                //     message: 'Đơn đã được thanh toán, ReFood xin cảm ơn Quý Khách',
-                                //     payment_info: {
-                                //         order_id: payment.vnp_TxnRef,
-                                //         invoice_id: invoiceid,
-                                //         order_subtotal: payment.vnp_Amount,
-                                //         order_bank: payment.vnp_BankCode,
-                                //         order_paiddate: payment.vnp_PayDate
-                                //     }
-                                // })
+                                return res.send(`<script>window.location='https://refoodapp.store/user/order/detail?id=${payment.vnp_TxnRef}?paid=vnpay'</script>`)
                             })
 
                     }
                     else
-                        return res.send(`<script>window.location='https://refoodapp.store/user/order/${payment.vnp_TxnRef}'</script>`)
-
-                    // return res.status(200).json({
-                    //     success: true,
-                    //     message: 'Đơn đã được thanh toán trước đó, ReFood xin cảm ơn Quý Khách',
-                    //     payment_info: {
-                    //         order_id: payment.vnp_TxnRef,
-                    //         order_subtotal: payment.vnp_Amount,
-                    //         order_bank: payment.vnp_BankCode,
-                    //         order_paiddate: payment.vnp_PayDate
-                    //     }
-                    // })
+                        return res.send(`<script>window.location='https://refoodapp.store/user/order/detail?id=${payment.vnp_TxnRef}'</script>`)
                 })
         else
             return res.status(400).json({
