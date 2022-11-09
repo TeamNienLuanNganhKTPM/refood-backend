@@ -12,6 +12,7 @@ const order = require('./route/order');
 const party = require('./route/party');
 const invoice = require('./route/invoice')
 const adminAuth = require('./route/admin.auth');
+const adminAnalysis = require('./route/admin.analysis');
 const adminManagementUser = require('./route/admin.management.user');
 const adminManagementFood = require('./route/admin.management.food');
 const adminManagementOrder = require('./route/admin.management.order')
@@ -45,6 +46,7 @@ app.use('/admin/management/food', adminManagementFood);
 app.use('/admin/management/order', adminManagementOrder);
 app.use('/admin/management/party', adminManagementParty);
 app.use('/admin/management/comment', adminManagementComment);
+app.use('/admin/analysis', adminAnalysis);
 app.use('/auth', auth);
 app.use('/food', food);
 app.use('/cart', cart);

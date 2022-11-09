@@ -82,5 +82,67 @@ class Admin {
             })
         });
     }
+
+    async analysisOrder() {
+        return new Promise((resolve, reject) => {
+            let sql = `select 
+            (select count(*) from don_dat_tiec) + (select count(*) from don_dat_mon) TONG_DON_HANG`
+            dbConnect.query(sql, [], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(result[0].TONG_DON_HANG)
+            })
+        })
+    }
+
+    async analysisFood() {
+        return new Promise((resolve, reject) => {
+            let sql = `select count(*) TONG_MON_AN from mon_an`
+            dbConnect.query(sql, [], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(result[0].TONG_MON_AN)
+            })
+        })
+    }
+
+    async analysisCustomer() {
+        return new Promise((resolve, reject) => {
+            let sql = `select count(*) TONG_KHACH_HANG from khach_hang`
+            dbConnect.query(sql, [], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(result[0].TONG_KHACH_HANG)
+            })
+        })
+    }
+
+    async analysisRevenue() {
+        return new Promise((resolve, reject) => {
+            let sql = `select 
+            (select sum(DDM_TONGTIEN) TONG_TIEN from don_dat_mon WHERE DDM_PTTT <> 'cod' or (DDM_PTTT='cod' and DDM_TRANGTHAI = 'Đã hoàn thành')) 
+            + 
+            (select sum(DDT_TONGTIEN) TONG_TIEN from don_dat_tiec where DDT_TRANGTHAI = 'Đã hoàn thành') TONG_TIEN`
+            dbConnect.query(sql, [], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(result[0].TONG_TIEN)
+            })
+        })
+    }
+
+    async analysisRevenueByTime(month, year) {
+        return new Promise((resolve, reject) => {
+            let sql = `select 
+            (select sum(DDM_TONGTIEN) TONG_TIEN from don_dat_mon WHERE (DDM_PTTT <> 'cod' or (DDM_PTTT='cod' and DDM_TRANGTHAI = 'Đã hoàn thành')) and MONTH(ddm_ngaygio) = ? and YEAR(ddm_ngaygio) = ?) 
+            + 
+            (select sum(DDT_TONGTIEN) TONG_TIEN from don_dat_tiec where DDT_TRANGTHAI = 'Đã hoàn thành' and MONTH(ddt_ngaygiodai) = ? and YEAR(ddt_ngaygiodai) = ?) TONG_TIEN`
+            dbConnect.query(sql, [month, year, month, year], (err, result) => {
+                if (err)
+                    return reject(err)
+                resolve(result[0].TONG_TIEN)
+            })
+        })
+    }
 }
 module.exports = Admin
