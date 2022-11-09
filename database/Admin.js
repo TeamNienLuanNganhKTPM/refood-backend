@@ -134,7 +134,7 @@ class Admin {
     async analysisRevenueByTime(month, year) {
         return new Promise((resolve, reject) => {
             let sql = `select 
-            (select sum(DDM_TONGTIEN) TONG_TIEN from don_dat_mon WHERE (DDM_PTTT <> 'cod' or (DDM_PTTT='cod' and DDM_TRANGTHAI = 'Đã hoàn thành')) and MONTH(ddm_ngaygio) = ? and YEAR(ddm_ngaygio) = ?) 
+            (select sum(DDM_TONGTIEN) TONG_TIEN from don_dat_mon WHERE ((DDM_PTTT <> 'cod' and DDM_TRANGTHAI <>'Đã hủy') or (DDM_PTTT='cod' and DDM_TRANGTHAI = 'Đã hoàn thành')) and MONTH(ddm_ngaygio) = ? and YEAR(ddm_ngaygio) = ?) 
             + 
             (select sum(DDT_TONGTIEN) TONG_TIEN from don_dat_tiec where DDT_TRANGTHAI = 'Đã hoàn thành' and MONTH(ddt_ngaygiodai) = ? and YEAR(ddt_ngaygiodai) = ?) TONG_TIEN`
             dbConnect.query(sql, [month, year, month, year], (err, result) => {
