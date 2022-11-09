@@ -71,7 +71,7 @@ class Party {
     async get(PartyID) {
         return new Promise((resolve, reject) => {
             const sql = `
-                SELECT ddt.ddt_MADON, ddt.DDT_LOAITIEC, ddt.DDT_DIADIEM	, ddt.DDT_NGAYGIODAI, ddt.DDT_SOBANTIEC, ddt.ddt_NGAYGIO, ddt.ddt_TONGTIEN, ddt.ddt_NOTE, ddt.ddt_TRANGTHAI ,
+                SELECT ddt.DDT_MADON, ddt.DDT_LOAITIEC, ddt.DDT_DIADIEM	, ddt.DDT_NGAYGIODAI, ddt.DDT_SOBANTIEC, ddt.DDT_NGAYGIO, ddt.DDT_TONGTIEN, ddt.DDT_NOTE, ddt.DDT_TRANGTHAI ,
                 kh.KH_MAKH,kh.KH_TENKH, kh.KH_SDT,
                 nvpt.NVPT_MANV, nvpt.NVPT_TENNV,
                 ma.MA_MAMON, ma.MA_TENMON, toSlug(ma.MA_TENMON) MA_SLUG, lma.LMA_TENLOAI,
@@ -215,8 +215,8 @@ class Party {
     async get(PartyID) {
         return new Promise((resolve, reject) => {
             const sql = `
-            SELECT ddt.DDT_MADON, ddt.DDT_NGAYGIO, ddt.DDT_LOAITIEC, ddt.DDT_DIADIEM, ddt.DDT_NGAYGIODAI, ddt.DDT_SOBANTIEC,ddt.DDT_TONGTIEN, ddt.DDT_NOTE, ddt.DDT_TRANGTHAI ,
-                kh.KH_MAKH,kh.KH_TENKH, kh.KH_SDT,                    
+            SELECT ddt.DDT_MADON, ddt.DDT_LOAITIEC, ddt.DDT_DIADIEM	, ddt.DDT_NGAYGIODAI, ddt.DDT_SOBANTIEC, ddt.DDT_NGAYGIO, ddt.DDT_TONGTIEN, ddt.DDT_NOTE, ddt.DDT_TRANGTHAI ,
+            kh.KH_MAKH,kh.KH_TENKH, kh.KH_SDT,                    
                 nvpt.NVPT_MANV, nvpt.NVPT_TENNV,
                 ma.MA_MAMON, ma.MA_TENMON, toSlug(ma.MA_TENMON) MA_SLUG, lma.LMA_TENLOAI,
                 ama.AMA_URL,
