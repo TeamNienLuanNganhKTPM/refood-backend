@@ -347,7 +347,7 @@ router.get('/order-payment-result', async (req, res) => {
                     if (result) {
                         await new Invoice().create(payment.vnp_TxnRef)
                             .then((invoiceid) => {
-                                return res.send(`<script>window.location='http://localhost:3000/user/order/${payment.vnp_TxnRef}?paid=vnpay'</script>`)
+                                return res.send(`<script>window.location='https://refoodapp.store/user/order/${payment.vnp_TxnRef}?paid=vnpay'</script>`)
                                 // return res.status(200).json({
                                 //     success: true,
                                 //     message: 'Đơn đã được thanh toán, ReFood xin cảm ơn Quý Khách',
@@ -363,7 +363,7 @@ router.get('/order-payment-result', async (req, res) => {
 
                     }
                     else
-                        return res.send(`<script>window.location='http://localhost:3000/user/order/${payment.vnp_TxnRef}'</script>`)
+                        return res.send(`<script>window.location='https://refoodapp.store/user/order/${payment.vnp_TxnRef}'</script>`)
 
                     // return res.status(200).json({
                     //     success: true,
