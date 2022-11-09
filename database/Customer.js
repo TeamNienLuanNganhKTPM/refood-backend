@@ -112,6 +112,28 @@ class Customer {
         });
     }
 
+    async getAllForAdmin() {
+        return new Promise((resolve, reject) => {
+            let sql = `SELECT * FROM khach_hang`
+            dbConnect.query(sql, [], (err, result) => {
+                if (err)
+                    return reject(err)
+                let customers = []
+                result.forEach(e => {
+                    customers.push(
+                        new Customer(
+                            e.KH_MAKH,
+                            e.KH_TENKH,
+                            e.KH_SDT,
+                            e.KH_EMAIL,
+                            null,
+                            e.KH_TRANGTHAI)
+                    );
+                })
+                resolve(customers)
+            })
+        })
+    }
 }
 
 module.exports = Customer;

@@ -6,6 +6,37 @@ const Admin = require('../database/Admin');
 const Customer = require('../database/Customer');
 require('dotenv').config()
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET
+router.get('/users/:pageCur/:numOnPage', verifyAdmin, async (req, res) => {
+    await new Customer()
+        .getAllForAdmin()
+        .then((customers) => {
+            let numberToGet = req.params.numOnPage //số lượng món ăn trên 1 trang
+            let pageNum = Math.ceil(customers.length / numberToGet);
+            const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+            let customerss = []
+            let curIndex = (pageCur - 1) * numberToGet
+            let count = 0
+            while (customers[curIndex] != null && count < numberToGet) {
+                customerss.push(customers[curIndex])
+                curIndex++
+                count++
+            }
+            return res.status(200).json({
+                success: true,
+                countOnPage: customerss.length,
+                pageCur,
+                pageNum,
+                customers: customerss
+            });
+        })
+        .catch((err) => setImmediate(() => {
+            return res.status(400).json({
+                success: false,
+                message: 'Vui lòng thử lại sau'
+            });
+        }))
+})
+
 router.get('/user-info/:userPhonenumber', verifyAdmin, async (req, res) => {
     const userPhonenumber = req.params.userPhonenumber
     const token = req.header('Authorization')
