@@ -1,4 +1,5 @@
 const dbConnect = require('./dbconnect');
+const { soNgayTrongThang } = require('../function/Inspect')
 class Admin {
     constructor(AdminID, AdminName, AdminPhoneNumber, AdminPassword) {
         this.AdminID = AdminID
@@ -141,6 +142,32 @@ class Admin {
                 if (err)
                     return reject(err)
                 resolve(result[0].TONG_TIEN)
+            })
+        })
+    }
+    async analysisRevenueByTimeEachDay(month, year) {
+        return new Promise((resolve, reject) => {
+            let sql = `
+            SELECT DAY(NGAY) NGAY, SUM(TONG_TIEN) TIEN_NGAY FROM 
+            (select sum(DDM_TONGTIEN) TONG_TIEN, date(DDM_NGAYGIO) NGAY  from don_dat_mon WHERE ((DDM_PTTT <> 'cod' and DDM_TRANGTHAI <>'Đã hủy') or (DDM_PTTT='cod' and DDM_TRANGTHAI = 'Đã hoàn thành')) and MONTH(ddm_ngaygio) = ? and YEAR(ddm_ngaygio) = ? group by date(DDM_NGAYGIO)
+            UNION ALL
+            select sum(DDT_TONGTIEN) TONG_TIEN, date(ddt_ngaygiodai) NGAY from don_dat_tiec where DDT_TRANGTHAI = 'Đã hoàn thành' and MONTH(ddt_ngaygiodai) = ? and YEAR(ddt_ngaygiodai) = ? group by date(ddt_ngaygiodai)) tientheongay
+            GROUP BY (tientheongay.NGAY)
+            ORDER BY NGAY`
+            dbConnect.query(sql, [month, year, month, year], (err, result) => {
+                if (err)
+                    return reject(err)
+                let revenue = []
+                for (let i = 1; i <= soNgayTrongThang(parseInt(month), parseInt(year)); i++) {
+                    revenue.push({
+                        NGAY: i,
+                        TIEN_NGAY: (revenue.NGAY == i) ? revenue.TIEN_NGAY : 0
+                    })
+                }
+                result.forEach(e => {
+                    revenue[e.NGAY - 1].TIEN_NGAY = e.TIEN_NGAY
+                })
+                resolve(revenue)
             })
         })
     }

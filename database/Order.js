@@ -144,6 +144,56 @@ class Order {
         })
     }
 
+    async filter(OrderID, CustomerPhone, DateStart, DateEnd) {
+        return new Promise((resolve, reject) => {
+            let whereQuery = ''
+            let sqlArray = []
+            if (OrderID != undefined && OrderID != '') {
+                if (sqlArray.length > 0)
+                    whereQuery = whereQuery.concat(` AND `)
+                whereQuery = whereQuery.concat(` DDM_MADON = ? `)
+                sqlArray.push(OrderID)
+            }
+            if (CustomerPhone != undefined && CustomerPhone != '') {
+                if (sqlArray.length > 0)
+                    whereQuery = whereQuery.concat(` AND `)
+                whereQuery = whereQuery.concat(` kh.KH_SDT = ? `)
+                sqlArray.push(CustomerPhone)
+            }
+            if (DateStart != undefined && DateStart != '') {
+                if (sqlArray.length > 0)
+                    whereQuery = whereQuery.concat(` AND `)
+                whereQuery = whereQuery.concat(` DATE(DDM_NGAYGIO) >= ? `)
+                sqlArray.push(DateStart)
+            }
+            if (DateEnd != undefined && DateEnd != '') {
+                if (sqlArray.length > 0)
+                    whereQuery = whereQuery.concat(` AND `)
+                whereQuery = whereQuery.concat(` DATE(DDM_NGAYGIO) <= ? `)
+                sqlArray.push(DateEnd)
+            }
+            if (whereQuery != '') whereQuery = 'WHERE ' + whereQuery
+            let sql = `SELECT * FROM don_dat_mon ddm join khach_hang kh ON kh.KH_MAKH = ddm.KH_MAKH
+                        ${whereQuery} ORDER BY DDM_NGAYGIO DESC`;
+            dbConnect.query(sql, sqlArray, (err, result) => {
+                if (err)
+                    return reject(err)
+                let order = []
+                result.forEach(e => {
+                    order.push({
+                        OrderID: e.DDM_MADON,
+                        OrderDate: e.DDM_NGAYGIO,
+                        OrderNote: e.DDM_NOTE,
+                        OrderSubTotal: e.DDM_TONGTIEN,
+                        OrderState: orderStatus.indexOf(e.DDM_TRANGTHAI),
+                        OrderPaymentMethod: getOrderPaymentMethod(e.DDM_PTTT)
+                    })
+                })
+                resolve(order)
+            })
+        })
+    }
+
     async updateForAdmin(OrderID, OrderState) {
         return new Promise((resolve, reject) => {
             const sql = `UPDATE don_dat_mon SET DDM_TRANGTHAI = ?

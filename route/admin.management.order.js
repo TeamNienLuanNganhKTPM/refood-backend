@@ -130,6 +130,30 @@ router.put('/cancel-order', verifyAdmin, async (req, res) => {
         })
 })
 
+router.post('/filter/:pageCur/:numOnPage', verifyAdmin, async (req, res) => {
+    let { orderid, customerphone, datestart, dateend } = req.query
+    await new Order().filter(orderid, customerphone, datestart, dateend)
+    .then((orders) => {
+        let numberToGet = parseInt(req.params.numOnPage) //số lượng món ăn trên 1 trang
+        let pageNum = Math.ceil(orders.length / numberToGet);
+        const pageCur = (req.params.pageCur > pageNum) ? pageNum : (req.params.pageCur < 1) ? 1 : req.params.pageCur
+        let orderss = []
+        let curIndex = (pageCur - 1) * numberToGet
+        let count = 0
+        while (orders[curIndex] != null && count < numberToGet) {
+            orderss.push(orders[curIndex])
+            curIndex++
+            count++
+        }
+        return res.status(200).json({
+            success: true,
+            countOnPage: orderss.length,
+            pageCur,
+            pageNum,
+            orders: orderss,
+        });
+    })
+})
 module.exports = router
 
 
