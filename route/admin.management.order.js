@@ -130,7 +130,7 @@ router.put('/cancel-order', verifyAdmin, async (req, res) => {
         })
 })
 
-router.post('/filter/:pageCur/:numOnPage', verifyAdmin, async (req, res) => {
+router.get('/filter/:pageCur/:numOnPage', verifyAdmin, async (req, res) => {
     let { orderid, customerphone, datestart, dateend } = req.query
     await new Order().filter(orderid, customerphone, datestart, dateend)
     .then((orders) => {
