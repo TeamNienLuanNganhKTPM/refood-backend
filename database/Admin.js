@@ -145,6 +145,7 @@ class Admin {
             })
         })
     }
+
     async analysisRevenueByTimeEachDay(month, year) {
         return new Promise((resolve, reject) => {
             let sql = `
@@ -166,6 +167,30 @@ class Admin {
                 }
                 result.forEach(e => {
                     revenue[e.NGAY - 1].TIEN_NGAY = e.TIEN_NGAY
+                })
+                resolve(revenue)
+            })
+        })
+    }
+
+    async analysisRevenueByTimeEachMonth(year) {
+        return new Promise((resolve, reject) => {
+            let sql = `
+            SELECT THANG, SUM(TONG_TIEN) TIEN_THANG FROM 
+            (select sum(DDM_TONGTIEN) TONG_TIEN, MONTH(DDM_NGAYGIO) THANG  from don_dat_mon WHERE ((DDM_PTTT <> 'cod' and DDM_TRANGTHAI <>'Đã hủy') or (DDM_PTTT='cod' and DDM_TRANGTHAI = 'Đã hoàn thành')) and YEAR(ddm_ngaygio) = ? group by MONTH(DDM_NGAYGIO)
+            UNION ALL
+            select sum(DDT_TONGTIEN) TONG_TIEN, MONTH(ddt_ngaygiodai) THANG from don_dat_tiec where DDT_TRANGTHAI = 'Đã hoàn thành' and YEAR(ddt_ngaygiodai) = ? group by MONTH(ddt_ngaygiodai)) tientheothang
+            GROUP BY (tientheothang.THANG)
+            ORDER BY THANG`
+            dbConnect.query(sql, [year, year], (err, result) => {
+                if (err)
+                    return reject(err)
+                let revenue = []
+                result.forEach(e => {
+                    revenue.push({
+                        THANG: e.THANG,
+                        TIEN_THANG: e.TIEN_THANG
+                    })
                 })
                 resolve(revenue)
             })

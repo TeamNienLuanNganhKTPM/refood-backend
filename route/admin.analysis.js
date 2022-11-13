@@ -96,4 +96,17 @@ router.get('/revenue-chart/:month/:year', verifyAdmin, async (req, res) => {
             })
         })
 })
+
+router.get('/revenue-chart/with/year/:year', verifyAdmin, async (req, res) => {
+    const { year } = req.params
+    await new Admin()
+        .analysisRevenueByTimeEachMonth(year)
+        .then((revenue) => {
+            return res.status(200).json({
+                success: true,
+                year,
+                revenue
+            })
+        })
+})
 module.exports = router
