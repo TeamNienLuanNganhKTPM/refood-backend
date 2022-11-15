@@ -1,5 +1,6 @@
 const dbConnect = require('./dbconnect');
-const { soNgayTrongThang } = require('../function/Inspect')
+const { soNgayTrongThang } = require('../function/Inspect');
+const { parse } = require('path');
 class Admin {
     constructor(AdminID, AdminName, AdminPhoneNumber, AdminPassword) {
         this.AdminID = AdminID
@@ -159,7 +160,10 @@ class Admin {
                 if (err)
                     return reject(err)
                 let revenue = []
-                for (let i = 1; i <= soNgayTrongThang(parseInt(month), parseInt(year)); i++) {
+                let day = (new Date().getUTCFullYear() == parseInt(year) && (new Date().getMonth() + 1) == parseInt(month)) ? new Date().getDate() :
+                    (new Date().getUTCFullYear() == parseInt(year) && (new Date().getMonth() + 1) < parseInt(month)) ? 0 :
+                        (new Date().getUTCFullYear() > parseInt(year)) ? soNgayTrongThang(parseInt(month), parseInt(year)) : 0
+                for (let i = 1; i <= day; i++) {
                     revenue.push({
                         KEY: i,
                         AMOUNT: 0
