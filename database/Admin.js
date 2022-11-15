@@ -161,12 +161,12 @@ class Admin {
                 let revenue = []
                 for (let i = 1; i <= soNgayTrongThang(parseInt(month), parseInt(year)); i++) {
                     revenue.push({
-                        NGAY: i,
-                        TIEN_NGAY: (revenue.NGAY == i) ? revenue.TIEN_NGAY : 0
+                        KEY: i,
+                        AMOUNT: 0
                     })
                 }
                 result.forEach(e => {
-                    revenue[e.NGAY - 1].TIEN_NGAY = e.TIEN_NGAY
+                    revenue[e.NGAY - 1].AMOUNT = e.TIEN_NGAY
                 })
                 resolve(revenue)
             })
@@ -186,12 +186,16 @@ class Admin {
                 if (err)
                     return reject(err)
                 let revenue = []
-                result.forEach(e => {
+                for (let i = 1; i <= 12; i++) {
                     revenue.push({
-                        THANG: e.THANG,
-                        TIEN_THANG: e.TIEN_THANG
+                        KEY: i,
+                        AMOUNT: 0
                     })
+                }
+                result.forEach(e => {
+                    revenue[e.THANG - 1].AMOUNT = e.TIEN_THANG
                 })
+
                 resolve(revenue)
             })
         })
