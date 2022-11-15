@@ -54,4 +54,21 @@ router.get('/get-invoice-detail/:invoiceid', verifyToken, async (req, res) => {
                 })
         })
 })
+
+router.get('/get-invoice-of-order/:orderid', verifyToken, async (req, res) => {
+    const orderid = req.params.orderid
+    await new Invoice().getInvoiceID(orderid)
+        .then((invoiceid) => {
+            if (invoiceid != false)
+                return res.status(200).json({
+                    success: true,
+                    invoiceid
+                })
+            else
+                return res.status(200).json({
+                    success: true,
+                    message: 'Đơn chưa thanh toán nên không có hóa đơn'
+                })
+        })
+})
 module.exports = router

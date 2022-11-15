@@ -1,5 +1,5 @@
 const dbConnect = require('./dbconnect')
-const {getOrderPaymentMethod} = require('../function/orderStatus')
+const { getOrderPaymentMethod } = require('../function/orderStatus')
 class Invoice {
     constructor(InvoiceID, InvoiceOrderID, InvoicePaidTime) {
         this.InvoiceID = InvoiceID
@@ -107,6 +107,19 @@ class Invoice {
                     })
                 }
                 resolve(false)
+            })
+        })
+    }
+
+    async getInvoiceID(OrderID) {
+        return new Promise((resolve, reject) => {
+            let sql = "SELECT * FROM hoa_don WHERE DDM_MADON = ?"
+            dbConnect.query(sql, [OrderID], (err, result) => {
+                if (err)
+                    return reject(err)
+                if (result.length > 0)
+                    resolve(result[0].HD_MAHD)
+                else resolve(false)
             })
         })
     }

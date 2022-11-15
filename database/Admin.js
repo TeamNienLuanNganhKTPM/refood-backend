@@ -186,7 +186,8 @@ class Admin {
                 if (err)
                     return reject(err)
                 let revenue = []
-                for (let i = 1; i <= 12; i++) {
+                let month = (new Date().getUTCFullYear() == parseInt(year)) ? new Date().getMonth() + 1 : (new Date().getUTCFullYear() < parseInt(year)) ? 0 : 12
+                for (let i = 1; i <= month; i++) {
                     revenue.push({
                         KEY: i,
                         AMOUNT: 0
@@ -195,7 +196,6 @@ class Admin {
                 result.forEach(e => {
                     revenue[e.THANG - 1].AMOUNT = e.TIEN_THANG
                 })
-
                 resolve(revenue)
             })
         })
