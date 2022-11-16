@@ -348,7 +348,7 @@ router.get('/order-payment-result', async (req, res) => {
                     if (result) {
                         await new Invoice().create(payment.vnp_TxnRef)
                             .then((invoiceid) => {
-                                return res.send(`<script>window.location='${process.env.FE_URL}/user/order/detail?id=${payment.vnp_TxnRef}?paid=vnpay'</script>`)
+                                return res.send(`<script>window.location='${process.env.FE_URL}/user/order/detail?id=${payment.vnp_TxnRef}&paid=vnpay'</script>`)
                             })
 
                     }
