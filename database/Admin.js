@@ -163,7 +163,6 @@ class Admin {
                 let day = (new Date().getUTCFullYear() == parseInt(year) && (new Date().getMonth() + 1) == parseInt(month)) ? new Date().getDate() :
                     (new Date().getUTCFullYear() == parseInt(year) && (new Date().getMonth() + 1) < parseInt(month)) ? 0 :
                         (new Date().getUTCFullYear() >= parseInt(year)) ? soNgayTrongThang(parseInt(month), parseInt(year)) : 0
-                console.log(day)
                 for (let i = 1; i <= day; i++) {
                     revenue.push({
                         KEY: i,

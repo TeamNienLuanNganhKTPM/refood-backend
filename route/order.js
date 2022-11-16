@@ -6,6 +6,7 @@ const Address = require('../database/Address')
 const Invoice = require('../database/Invoice');
 const Order = require('../database/Order');
 const verifyToken = require('../authentication/auth')
+require('dotenv').config()
 const { checkText, checkPaymentMethod } = require('../function/Inspect');
 const { VNPayURL, verifyHashcode } = require('../function/VNPayAPI');
 router.post('/create-food-order', verifyToken, async (req, res) => {
@@ -347,12 +348,12 @@ router.get('/order-payment-result', async (req, res) => {
                     if (result) {
                         await new Invoice().create(payment.vnp_TxnRef)
                             .then((invoiceid) => {
-                                return res.send(`<script>window.location='https://refoodapp.store/user/order/detail?id=${payment.vnp_TxnRef}?paid=vnpay'</script>`)
+                                return res.send(`<script>window.location='${process.env.FE_URL}/user/order/detail?id=${payment.vnp_TxnRef}?paid=vnpay'</script>`)
                             })
 
                     }
                     else
-                        return res.send(`<script>window.location='https://refoodapp.store/user/order/detail?id=${payment.vnp_TxnRef}'</script>`)
+                        return res.send(`<script>window.location='${process.env.FE_URL}/user/order/detail?id=${payment.vnp_TxnRef}'</script>`)
                 })
         else
             return res.status(400).json({
