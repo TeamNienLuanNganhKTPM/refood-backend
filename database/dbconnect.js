@@ -6,12 +6,12 @@ var dbconfig = {
     database: 'quananc1_refood'
 }
 var dbConnect = mysql.createPool({
-    connectionLimit : 100, //important
-    host: '103.130.216.100',
-    user: 'quananc1_refooddb',
-    password: 'Lieutuanvu',
-    database: 'quananc1_refood',
-    debug    :  false
+   connectionLimit: 100, //important
+  host: "fdb1029.awardspace.net",
+  user: "4268738_refooddb",
+  password: "Vominhkha27",
+  database: "4268738_refooddb",
+  debug: false,
 });
 // var dbConnect
 // // = mysql.createConnection({
